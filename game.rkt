@@ -15,9 +15,7 @@
 (struct world (regions))
 
 (define (new-world region-data)
-  (let* ([regions (map (lambda (x)
-                         (apply new-region x))
-                       region-data)] 
+  (let* ([regions (map (curry apply new-region) region-data)] 
          [w (world regions)]
          [e (get-errors w)])
     (if e
@@ -60,12 +58,11 @@
   (region-adjacent-regions (get-region world r)))
 
 (define (get-errors world)
-  (for/or ([r (in-range (length (world-regions world)))])
-    (ormap (lambda (ar)
-             (if (member r (get-adjacent-regions world ar))
-                 #f
-                 (list 'adjacency-error r)))
-           (get-adjacent-regions world r))))
+  (for*/or ([r (in-range (length (world-regions world)))]
+            [ar (get-adjacent-regions world r)])
+    (if (member r (get-adjacent-regions world ar))
+        #f
+        (list 'adjacency-error r))))
 
 
 ;; Races
