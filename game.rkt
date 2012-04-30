@@ -5,7 +5,7 @@
 
 ;; Region
 
-(struct region (terrain-type places adjacent-regions tokens))
+(struct region (terrain-type places adjacent-regions [tokens #:mutable]))
 
 (define (new-region terrain-type places adjacent-regions . tokens)
   (region terrain-type places adjacent-regions tokens))
@@ -60,6 +60,9 @@
 (define (get-adjacent-regions world r)
   (region-adjacent-regions (get-region world r)))
 
+(define (get-tokens world r) 
+  (region-tokens (get-region world r)))
+
 (define (get-errors world)
   (for/or ([r (in-range (length (world-regions world)))])
     (ormap (lambda (ar)
@@ -107,7 +110,7 @@
         (set! special-powers (vector-drop special-powers 1))))
     
     (define races '()) 
-     
+    
     (for ([i (in-range 6)]) 
       (add-new-race!))
     
@@ -119,7 +122,15 @@
                [race (list-ref races race-index)])
           (set-player-races! p (cons race (player-races p)))
           (set! races (drop-nth races race-index))
-          (add-new-race!)))
+          (add-new-race!))
+        
+        (map (lambda (r)
+               (let ([race (get-active-race p)]
+                     [tokens-to-conquer (+ 2 (length (get-tokens world r)))] 
+                     [region (get-region world r)])
+                 (set-region-tokens! region (make-list tokens-to-conquer (race-race-banner race))))) 
+             ((strategy-conquer (player-strategy p)) this p)))
+      
       (set! turn (add1 turn)))
     
     ))
@@ -142,6 +153,8 @@
 (define (new-player name strategy)
   (player name 5 '() strategy))
 
+(define (get-active-race player) 
+  (first (player-races player)))
 
 ;; Strategy
 
@@ -157,7 +170,7 @@
 
 ;; Tests
 
-(define p1 (new-player "Vasya" (new-strategy)))
+(define p1 (new-player "Vasya" (new-strategy #:conquer (lambda (game player) '(2)))))
 (check-equal? (player-name p1) "Vasya")
 
 (define p2 (new-player "Petya" (new-strategy)))
@@ -183,14 +196,15 @@
 (check-equal? (vector-length (send g get-race-banners)) 8)
 (check-equal? (vector-ref (send g get-race-banners) 0) 'humans)
 
+(define w (send g get-world))
+
 (send g play-turn)
 (check-equal? (player-races p1) (list r1))
 (check-equal? (player-races p2) (list r2))
+(check-equal? (get-tokens w 2) '(amazons amazons))
 (check-equal? (send g get-turn) 2)
 (check-equal? (length (send g get-races)) 6)
 
-
-(define w (send g get-world))
 (check-equal? (get-terrain-type w 1) 'sea-or-lake)
 (check-equal? (get-adjacent-regions w 1) '(0 2 6))
 (check-equal? (get-terrain-type w 7) 'hills)
