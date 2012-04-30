@@ -1,6 +1,7 @@
 #lang racket
 
 (require rackunit)
+(require "utils.rkt")
 
 ;; Region
 
@@ -121,8 +122,7 @@
     (let* ([race-index ((strategy-pick-a-race (player-strategy p)) game p)]
            [race (vector-ref (get-available-races game) race-index)])
       (set-player-races! p (cons race (player-races p)))
-      (set-game-races! game (vector-append (vector-take (game-races game) race-index)
-                                           (vector-drop (game-races game) (add1 race-index))))
+      (set-game-races! game (vector-drop-nth (game-races game) race-index))
       (add-available-race! game)))  
   (set-game-turn! game (add1 (game-turn game))))
 
