@@ -1,10 +1,11 @@
 #lang racket
 
 (require rackunit)
+(require "utils.rkt")
 
 ;; Region
 
-(struct region (terrain-type places adjacent-regions tokens))
+(struct region (terrain-type places adjacent-regions [tokens #:mutable]))
 
 (define (new-region terrain-type places adjacent-regions . tokens)
   (region terrain-type places adjacent-regions tokens))
@@ -57,6 +58,9 @@
 (define (get-adjacent-regions world r)
   (region-adjacent-regions (get-region world r)))
 
+(define (get-tokens world r) 
+  (region-tokens (get-region world r)))
+
 (define (get-errors world)
   (for*/or ([r (in-range (length (world-regions world)))]
             [ar (get-adjacent-regions world r)])
@@ -74,13 +78,59 @@
 
 
 ;; Game
-
-(struct game (world 
-              [race-banners #:mutable] 
-              [special-powers #:mutable] 
-              [races #:mutable] 
-              players 
-              [turn #:mutable]))
+(define game% 
+  (class object% 
+    (init players)
+    
+    (super-new)
+    
+    (define current-players players)
+    (define/public (get-players) current-players) 
+    
+    (define world (create-world-for-two-players))
+    (define/public (get-world) world)
+    
+    (define race-banners (list->vector all-race-banners))
+    (define/public (get-race-banners) race-banners)
+    
+    (define special-powers (list->vector all-special-powers))
+    (define/public (get-special-powers) special-powers)
+    
+    (define turn 1)
+    (define/public (get-turn) turn)
+    
+    (define (add-new-race!) 
+      (let ([race (new-race (vector-ref race-banners 0)
+                            (vector-ref special-powers 0))])
+        (set! races (append races (list race)))
+        (set! race-banners (vector-drop race-banners 1))
+        (set! special-powers (vector-drop special-powers 1))))
+    
+    (define races '()) 
+    
+    (for ([i (in-range 6)]) 
+      (add-new-race!))
+    
+    (define/public (get-races) races)
+    
+    (define/public (play-turn)
+      (for ([p current-players])
+        (let* ([race-index ((strategy-pick-a-race (player-strategy p)) this p)]
+               [race (list-ref races race-index)])
+          (set-player-races! p (cons race (player-races p)))
+          (set! races (drop-nth races race-index))
+          (add-new-race!))
+        
+        (map (lambda (r)
+               (let ([race (get-active-race p)]
+                     [tokens-to-conquer (+ 2 (length (get-tokens world r)))] 
+                     [region (get-region world r)])
+                 (set-region-tokens! region (make-list tokens-to-conquer (race-race-banner race))))) 
+             ((strategy-conquer (player-strategy p)) this p)))
+      
+      (set! turn (add1 turn)))
+    
+    ))
 
 (define all-race-banners 
   '(amazons dwarves elves ghouls giants
@@ -91,41 +141,7 @@
   '(alchemist berserk bivouacking commando diplomat
               dragon-master flying forest fortified heroic
               hill merchant mounted pillaging seafaring
-              spirit stout swamp underworld wealthy))        
-
-(define (new-game . players)
-  (let* ([world (create-world-for-two-players)]
-         [race-banners (list->vector all-race-banners)]
-         [special-powers (list->vector all-special-powers)]
-         [races (vector)]
-         [game (game world race-banners special-powers races players 1)])
-    (for ([i (in-range 6)])
-      (add-available-race! game))
-    game))
-
-(define (add-available-race! game)
-  (let ([race (new-race (vector-ref (game-race-banners game) 0)
-                        (vector-ref (game-special-powers game) 0))])
-    (set-game-races! game (vector-append (game-races game) (vector race)))
-    (set-game-race-banners! game (vector-drop (game-race-banners game) 1))
-    (set-game-special-powers! game (vector-drop (game-special-powers game) 1))))
-
-(define (get-player-count game)
-  (length (game-players game)))
-
-(define (play-turn game)
-  (for ([p (in-list (game-players game))])
-    (let* ([race-index ((strategy-pick-a-race (player-strategy p)) game p)]
-           [race (vector-ref (get-available-races game) race-index)])
-      (set-player-races! p (cons race (player-races p)))
-      (set-game-races! game (vector-append (vector-take (game-races game) race-index)
-                                           (vector-drop (game-races game) (add1 race-index))))
-      (add-available-race! game)))  
-  (set-game-turn! game (add1 (game-turn game))))
-
-(define (get-available-races game)
-  (game-races game))
-
+              spirit stout swamp underworld wealthy))
 
 ;; Player
 
@@ -134,6 +150,8 @@
 (define (new-player name strategy)
   (player name 5 '() strategy))
 
+(define (get-active-race player) 
+  (first (player-races player)))
 
 ;; Strategy
 
@@ -149,40 +167,41 @@
 
 ;; Tests
 
-(define p1 (new-player "Vasya" (new-strategy)))
+(define p1 (new-player "Vasya" (new-strategy #:conquer (lambda (game player) '(2)))))
 (check-equal? (player-name p1) "Vasya")
 
 (define p2 (new-player "Petya" (new-strategy)))
 
-(define g (new-game p1 p2))
-(check-equal? (get-player-count g) 2)
-(check-eq? (first (game-players g)) p1)
-(check-eq? (second (game-players g)) p2)
-(check-equal? (game-turn g) 1)
+(define g (new game% [players (list p1 p2)]))
+(check-equal? (length (send g get-races)) 6)
+
+(check-equal? (length (send g get-players)) 2)
+(check-eq? (first (send g get-players)) p1)
+(check-eq? (second (send g get-players)) p2)
+(check-equal? (send g get-turn) 1)
 (check-equal? (player-points p1) 5)
 (check-equal? (player-points p2) 5)
 
-(check-equal? (vector-length (get-available-races g)) 6)
-
-(define r1 (vector-ref (get-available-races g) 0))
+(define r1 (first (send g get-races)))
 (check-equal? (race-special-power r1) 'alchemist)
 (check-equal? (race-race-banner r1) 'amazons)
 
-(define r2 (vector-ref (get-available-races g) 1))
+(define r2 (second (send g get-races)))
 (check-equal? (race-special-power r2) 'berserk)
 (check-equal? (race-race-banner r2) 'dwarves)
 
-(check-equal? (vector-length (game-race-banners g)) 8)
-(check-equal? (vector-ref (game-race-banners g) 0) 'humans)
+(check-equal? (vector-length (send g get-race-banners)) 8)
+(check-equal? (vector-ref (send g get-race-banners) 0) 'humans)
 
-(play-turn g)
+(define w (send g get-world))
+
+(send g play-turn)
 (check-equal? (player-races p1) (list r1))
 (check-equal? (player-races p2) (list r2))
-(check-equal? (game-turn g) 2)
-(check-equal? (vector-length (get-available-races g)) 6)
+(check-equal? (get-tokens w 2) '(amazons amazons))
+(check-equal? (send g get-turn) 2)
+(check-equal? (length (send g get-races)) 6)
 
-
-(define w (game-world g))
 (check-equal? (get-terrain-type w 1) 'sea-or-lake)
 (check-equal? (get-adjacent-regions w 1) '(0 2 6))
 (check-equal? (get-terrain-type w 7) 'hills)
