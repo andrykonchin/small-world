@@ -2,6 +2,7 @@
 
 (require rackunit)
 (require "utils.rkt")
+(require "maps.rkt")
 
 ;; Region
 
@@ -25,32 +26,6 @@
 
 (define (get-region world index)
   (list-ref (world-regions world) index))
-
-(define (create-world-for-two-players)
-  (new-world '((border () (1 2 3 4 5 6 11 12 16 17 18 19 20 21 22 23))
-               (sea-or-lake () (0 2 6))
-               (farmlands (magic-source) (0 1 3 6 7))
-               (forest (mine) (0 2 4 7 8 9))
-               (swamp (cavern) (0 3 5 9 10) lost-tribe)
-               (hills () (0 4 10 11))
-               (mountains (cavern mine) (0 1 2 7 12) mountain)
-               (hills () (2 3 6 8 12 13) lost-tribe)
-               (sea-or-lake () (3 7 9 13 14))
-               (mountains () (3 4 8 10 14 15) mountain)
-               (farmlands () (4 5 9 11 15))
-               (forest (magic-source) (0 5 10 15 16) lost-tribe)
-               (farmlands () (0 6 7 13 17 18) lost-tribe)
-               (forest () (7 8 12 14 18 19) lost-tribe)
-               (farmland (magic-source) (8 9 13 15 19 20 21) lost-tribe)
-               (hills (cavern) (9 10 11 14 16 21 22) lost-tribe)
-               (mountains (mine) (0 11 15 22 23) mountain)
-               (swamp (magic-source) (0 12 18) lost-tribe)
-               (hills (cavern) (0 12 13 17 19))
-               (swamp (mine) (0 13 14 18 20) lost-tribe)
-               (mountains () (0 14 19 21) mountain)
-               (swamp () (0 14 15 20 22 23))
-               (forest () (0 15 16 21 23))
-               (sea-or-lake () (0 16 21 22)))))
 
 (define (get-terrain-type world r)
   (region-terrain-type (get-region world r)))
@@ -87,24 +62,23 @@
     (define current-players players)
     (define/public (get-players) current-players) 
     
-    (define world (create-world-for-two-players))
+    (define world (new-world two-player-map))
     (define/public (get-world) world)
     
-    (define race-banners (list->vector all-race-banners))
+    (define race-banners all-race-banners)
     (define/public (get-race-banners) race-banners)
     
-    (define special-powers (list->vector all-special-powers))
+    (define special-powers all-special-powers)
     (define/public (get-special-powers) special-powers)
     
     (define turn 1)
     (define/public (get-turn) turn)
     
     (define (add-new-race!) 
-      (let ([race (new-race (vector-ref race-banners 0)
-                            (vector-ref special-powers 0))])
+      (let ([race (new-race (first race-banners) (first special-powers))])
         (set! races (append races (list race)))
-        (set! race-banners (vector-drop race-banners 1))
-        (set! special-powers (vector-drop special-powers 1))))
+        (set! race-banners (rest race-banners))
+        (set! special-powers (rest special-powers))))
     
     (define races '()) 
     
@@ -190,8 +164,8 @@
 (check-equal? (race-special-power r2) 'berserk)
 (check-equal? (race-race-banner r2) 'dwarves)
 
-(check-equal? (vector-length (send g get-race-banners)) 8)
-(check-equal? (vector-ref (send g get-race-banners) 0) 'humans)
+(check-equal? (length (send g get-race-banners)) 8)
+(check-equal? (first (send g get-race-banners)) 'humans)
 
 (define w (send g get-world))
 
