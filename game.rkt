@@ -53,7 +53,7 @@
       (for ([p current-players])
         (let* ([race-index ((strategy-pick-a-race (player-strategy p)) this p)]
                [race (list-ref races race-index)])
-          (set-player-races! p (cons race (player-races p)))
+          (send p add-race! race)
           (set! races (remove-nth races race-index))
           (add-new-race!))
         
@@ -81,10 +81,27 @@
 
 ;; Player
 
-(struct player (name points [races #:mutable] strategy))
+(define player% 
+  (class object%
+    (super-new)
+    
+    (init-field name)
+    (init-field strategy)
+    (field [points 5])
+    (field [races '()])
+    
+    (define/public (add-race! race)
+      (set! races (cons race races)))
+    
+    ))
 
 (define (new-player name strategy)
-  (player name 5 '() strategy))
+  (new player% [name name] [strategy strategy]))
+
+(define player-name (class-field-accessor player% name))
+(define player-strategy (class-field-accessor player% strategy))
+(define player-points (class-field-accessor player% points))
+(define player-races (class-field-accessor player% races))
 
 (define (get-active-race player) 
   (first (player-races player)))
