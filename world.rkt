@@ -10,11 +10,24 @@
 
 
 ;; Region
-
-(struct region (terrain-type places adjacent-regions [tokens #:mutable]))
+(define region%
+  (class object%
+    (super-new)
+    (init-field terrain-type)
+    (init-field places)
+    (init-field adjacent-regions)
+    (init-field tokens)
+    ))
+    
+;(struct region (terrain-type places adjacent-regions [tokens #:mutable]))
 
 (define (new-region terrain-type places adjacent-regions . tokens)
-  (region terrain-type places adjacent-regions tokens))
+  (make-object region% terrain-type places adjacent-regions tokens))
+
+(define region-terrain-type (class-field-accessor region% terrain-type))
+(define region-adjacent-regions (class-field-accessor region% adjacent-regions))
+(define region-tokens (class-field-accessor region% tokens))
+(define set-region-tokens! (class-field-mutator region% tokens))
 
 
 ;; World (map)
