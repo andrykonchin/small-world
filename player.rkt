@@ -26,7 +26,7 @@
       (findf active? races))
     
     (define/public (add-race! race)
-      (set! races (cons race races)))
+      (set! races (append races (list race))))
     
     (define (pick-a-race)
       (let* ([race-index ((strategy-pick-a-race strategy) this)])
@@ -84,3 +84,11 @@
   (check-equal? (send p get-active-race) r)
   (decline! r)
   (check-false (send p get-active-race)))
+
+(let* (
+       [p (new-player "Vasya" #f)]
+       [r1 (new-race 'berserk 'amazons)]
+       [r2 (new-race 'alchemist 'dwarves)])
+  (send p add-race! r1)
+  (send p add-race! r2)
+  (check-equal? (player-races p) (list r1 r2)))

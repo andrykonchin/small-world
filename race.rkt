@@ -14,12 +14,18 @@
          all-special-powers)
 
 (define race%
-  (class object%
+  (class* object% (writable<%>)
     (super-new)
     (init-field race-banner)
     (init-field special-power)
     (field [coins 0])
     (field [in-decline #f])
+    
+    (define/public (custom-write port)
+      (write (list special-power race-banner) port))
+    
+    (define/public (custom-display port)
+      (display (list special-power race-banner) port))
     
     (define/public (can-conquer?)
       (not in-decline))
@@ -40,7 +46,7 @@
 
 (define (decline! race)
   (set-field! in-decline race #t))
-  
+
 
 (define all-race-banners
   '(amazons dwarves elves ghouls giants
