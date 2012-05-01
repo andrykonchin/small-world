@@ -1,11 +1,17 @@
 #lang racket
 
-(provide vector-drop-nth drop-nth) 
+(require rackunit)
 
-(define (vector-drop-nth v n) 
-  (vector-append (vector-take v n)
-                 (vector-drop v (add1 n))))
+(provide remove-nth) 
 
-(define (drop-nth v n) 
-  (append (take v n) 
-          (drop v (add1 n))))
+(define (remove-nth lst n) 
+  (append (take lst n) 
+          (drop lst (add1 n))))
+
+
+;; Test
+
+(check-equal? (remove-nth '(0 1 2 3) 0) '(1 2 3))
+(check-equal? (remove-nth '(0 1 2 3) 1) '(0 2 3))
+(check-equal? (remove-nth '(0 1 2 3) 2) '(0 1 3))
+(check-equal? (remove-nth '(0 1 2 3) 3) '(0 1 2))

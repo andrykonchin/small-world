@@ -92,7 +92,7 @@
         (let* ([race-index ((strategy-pick-a-race (player-strategy p)) this p)]
                [race (list-ref races race-index)])
           (set-player-races! p (cons race (player-races p)))
-          (set! races (drop-nth races race-index))
+          (set! races (remove-nth races race-index))
           (add-new-race!))
         
         (map (lambda (r)
