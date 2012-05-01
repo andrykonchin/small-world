@@ -22,16 +22,16 @@
 (define world%
   (class object%
     (super-new)
-    
+
     (init region-data)
-    
+
     (field [regions (map (curry apply new-region) region-data)])
-    
+
     (for* ([r (in-range (length regions))]
            [ar (get-adjacent-regions this r)])
       (when (not (member r (get-adjacent-regions this ar)))
         (error "Adjacency error" r)))
-    
+
     ))
 
 (define (new-world region-data)
@@ -48,7 +48,7 @@
 (define (get-adjacent-regions world r)
   (region-adjacent-regions (get-region world r)))
 
-(define (get-tokens world r) 
+(define (get-tokens world r)
   (region-tokens (get-region world r)))
 
 (define (set-tokens! world r tokens)

@@ -8,8 +8,8 @@
 
 ;; Races
 
-(struct race (race-banner 
-              special-power 
+(struct race (race-banner
+              special-power
               [coins #:mutable]
               [in-decline #:mutable])
   #:transparent)
@@ -19,53 +19,53 @@
 
 
 ;; Game
-(define game% 
-  (class object% 
+(define game%
+  (class object%
     (super-new)
-    
+
     (init-field players)
-    (define/public (get-players) players) 
+    (define/public (get-players) players)
     (for ([p players])
       (set-field! game p this))
-    
+
     (define world (new-world two-player-map))
     (define/public (get-world) world)
-    
+
     (define race-banners all-race-banners)
     (define/public (get-race-banners) race-banners)
-    
+
     (define special-powers all-special-powers)
     (define/public (get-special-powers) special-powers)
-    
+
     (define turn 1)
     (define/public (get-turn) turn)
-    
-    (define (add-new-race!) 
+
+    (define (add-new-race!)
       (let ([race (new-race (first race-banners) (first special-powers))])
         (set! races (append races (list race)))
         (set! race-banners (rest race-banners))
         (set! special-powers (rest special-powers))))
-    
-    (define races '()) 
-    
-    (for ([i (in-range 6)]) 
+
+    (define races '())
+
+    (for ([i (in-range 6)])
       (add-new-race!))
-    
+
     (define/public (get-races) races)
-    
+
     (define/public (take-race index)
       (let ([race (list-ref races index)])
         (set! races (remove-nth races index))
         (add-new-race!)
         race))
-    
+
     (define/public (play-turn)
       (for ([p players])
         (send p play-turn))
       (set! turn (add1 turn)))
     ))
 
-(define all-race-banners 
+(define all-race-banners
   '(amazons dwarves elves ghouls giants
             halflings humans orcs ratmen skeletons
             sourcerers tritons trolls wizards))
@@ -79,37 +79,36 @@
 
 ;; Player
 
-(define player% 
+(define player%
   (class object%
     (super-new)
-    
+
     (init-field name)
     (init-field strategy)
     (field [game #f])
     (field [points 5])
     (field [races '()])
-    
+
     (define/public (get-active-race)
-      (findf (lambda (r) (not (race-in-decline r))) 
+      (findf (lambda (r) (not (race-in-decline r)))
              races))
-    
+
     (define/public (add-race! race)
       (set! races (cons race races)))
-    
+
     (define (pick-a-race)
-      (when (not (get-active-race)) 
+      (when (not (get-active-race))
         (let* ([race-index ((strategy-pick-a-race strategy) this)])
           (add-race! (send game take-race race-index)))))
 
     (define (conquer)
-      (map (lambda (r)
-             (let ([race (get-active-race)]
-                   [tokens-to-conquer (+ 2 (length (get-tokens (send game get-world) r)))])
-               (set-tokens! (send game get-world) 
-                            r 
-                            (make-list tokens-to-conquer (race-race-banner race)))))
-           ((strategy-conquer strategy) this)))
-    
+      (for ([r ((strategy-conquer strategy) this)])
+        (let ([race (get-active-race)]
+              [tokens-to-conquer (+ 2 (length (get-tokens (send game get-world) r)))])
+          (set-tokens! (send game get-world)
+                       r
+                       (make-list tokens-to-conquer (race-race-banner race))))))
+
     (define (redeploy)
       #f)
 
