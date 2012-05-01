@@ -9,6 +9,7 @@
          active?
          in-decline?
          can-conquer?
+         decline!
          all-race-banners
          all-special-powers)
 
@@ -19,6 +20,10 @@
     (init-field special-power)
     (field [coins 0])
     (field [in-decline #f])
+    
+    (define/public (can-conquer?)
+      (not in-decline))
+    
     ))
 
 (define (new-race special-power race-banner)
@@ -29,7 +34,9 @@
 (define race-coins (class-field-accessor race% coins))
 (define in-decline? (class-field-accessor race% in-decline))
 (define active? (negate in-decline?))
-(define can-conquer? active?)
+
+(define (can-conquer? race)
+  (send race can-conquer?))
 
 (define (decline! race)
   (set-field! in-decline race #t))
@@ -46,6 +53,14 @@
               hill merchant mounted pillaging seafaring
               spirit stout swamp underworld wealthy))
 
+(define (ghouls %)
+  (class %
+    (super-new)
+    (define/override (can-conquer?)
+      #t)
+    ))
+
+
 ;; Tests
 
 (let ([r (new-race 'berserk 'amazons)])
@@ -57,3 +72,8 @@
   (check-true (can-conquer? r))
   (decline! r)
   (check-false (can-conquer? r)))
+
+(let ([rg (new (ghouls race%) [race-banner #f] [special-power #f])])
+  (check-true (can-conquer? rg))
+  (decline! rg)
+  (check-true (can-conquer? rg)))

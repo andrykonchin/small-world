@@ -162,5 +162,5 @@
 (define r (new-race 'berserk 'amazons))
 (send p add-race! r)
 (check-equal? (send p get-active-race) r)
-(set-race-in-decline! r #t)
+(decline! r)
 (check-false (send p get-active-race))
