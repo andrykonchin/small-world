@@ -57,7 +57,7 @@
 
 ;; Tests
 
-(define p1 (new-player "Vasya" (new-strategy #:conquer (lambda (player) '(2)))))
+(define p1 (new-player "Vasya" (new-strategy #:conquer (lambda (player race) '(2)))))
 (define p2 (new-player "Petya" (new-strategy)))
 
 (define g (new game% [players (list p1 p2)]))
@@ -89,3 +89,17 @@
 (check-equal? (get-tokens w 2) '(amazons amazons))
 (check-equal? (send g get-turn) 2)
 (check-equal? (length (send g get-races)) 6)
+
+; conquer
+(let* ([count 0]
+       [p (new-player "Vasya" (new-strategy #:conquer (lambda (player race) 
+                                                        (set! count (add1 count)) 
+                                                        '(2))))]
+       [r1 (new-race 'berserk 'amazons)]
+       [r2 (new-race 'alchemist 'dwarves)]
+       [g (new game% [players (list p)])])
+  (send p add-race! r1)
+  (send p add-race! r2)
+  (send p conquer)
+  (check-equal? count 2))
+

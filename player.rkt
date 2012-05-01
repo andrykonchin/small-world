@@ -32,13 +32,13 @@
       (let* ([race-index ((strategy-pick-a-race strategy) this)])
         (add-race! (send game take-race race-index))))
     
-    (define (conquer)
-      (for ([r ((strategy-conquer strategy) this)])
-        (let ([race (get-active-race)]
-              [tokens-to-conquer (+ 2 (length (get-tokens (send game get-world) r)))])
+    (define/public (conquer)
+      (for ([race races] #:when (can-conquer? race))
+        (for ([r ((strategy-conquer strategy) this race)])
+        (let ([tokens-to-conquer (+ 2 (length (get-tokens (send game get-world) r)))])
           (set-tokens! (send game get-world)
                        r
-                       (make-list tokens-to-conquer (race-race-banner race))))))
+                       (make-list tokens-to-conquer (race-race-banner race)))))))
     
     (define (redeploy)
       #f)
@@ -66,7 +66,7 @@
 
 (define (new-strategy #:pick-a-race [pick-a-race (lambda (player) 0)]
                       #:ready-troops [ready-troops (lambda (player) '())]
-                      #:conquer [conquer (lambda (player) '())]
+                      #:conquer [conquer (lambda (player race) '())]
                       #:redeploy [redeploy (lambda (player) #f)]
                       #:go-into-decline [go-into-decline (lambda (player) #f)])
   (strategy pick-a-race ready-troops conquer redeploy go-into-decline))
