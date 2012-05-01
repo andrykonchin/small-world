@@ -14,15 +14,25 @@
 
 ;; World (map)
 
-(struct world (regions))
+(define world%
+  (class object%
+    (super-new)
+    
+    (init region-data)
+    
+    (field [regions (map (curry apply new-region) region-data)])
+    
+    (for* ([r (in-range (length regions))]
+           [ar (get-adjacent-regions this r)])
+      (when (not (member r (get-adjacent-regions this ar)))
+        (error "Adjacency error" r)))
+    
+    ))
 
 (define (new-world region-data)
-  (let* ([regions (map (curry apply new-region) region-data)] 
-         [w (world regions)]
-         [e (get-errors w)])
-    (if e
-        (error "Invalid world map" e)
-        w)))
+  (new world% [region-data region-data]))
+
+(define world-regions (class-field-accessor world% regions))
 
 (define (get-region world index)
   (list-ref (world-regions world) index))
@@ -35,13 +45,6 @@
 
 (define (get-tokens world r) 
   (region-tokens (get-region world r)))
-
-(define (get-errors world)
-  (for*/or ([r (in-range (length (world-regions world)))]
-            [ar (get-adjacent-regions world r)])
-    (if (member r (get-adjacent-regions world ar))
-        #f
-        (list 'adjacency-error r))))
 
 
 ;; Races
@@ -181,10 +184,7 @@
 (check-equal? (get-terrain-type w 7) 'hills)
 (check-equal? (get-adjacent-regions w 7) '(2 3 6 8 12 13))
 
-(define w0 (world (list (new-region 'border '() '()))))
-(check-equal? (get-errors w0) #f)
-
-(define m2 (world (list (new-region 'border '() '())
-                        (new-region 'sea-or-lake '() '(0 1))
-                        (new-region 'mountain '() '(0)))))
-(check-equal? (get-errors m2) '(adjacency-error 1))
+(check-exn exn:fail? 
+           (lambda () (new-world '((border () ())
+                                   (sea-or-lake () (0 1))
+                                   (mountain () (0))))))
