@@ -31,7 +31,7 @@
     (define/public (get-turn) turn)
     
     (define (add-new-race!)
-      (let ([race (new-race (first race-banners) (first special-powers))])
+      (let ([race (new-race (first special-powers) (first race-banners))])
         (set! races (append races (list race)))
         (set! race-banners (rest race-banners))
         (set! special-powers (rest special-powers))))
@@ -69,8 +69,7 @@
     (field [races '()])
     
     (define/public (get-active-race)
-      (findf (lambda (r) (not (race-in-decline r)))
-             races))
+      (findf active? races))
     
     (define/public (add-race! race)
       (set! races (cons race races)))
@@ -160,7 +159,7 @@
 ; Player test
 (define p (new-player "Vasya" #f))
 (check-false (send p get-active-race))
-(define r (new-race 'amazons 'berserk))
+(define r (new-race 'berserk 'amazons))
 (send p add-race! r)
 (check-equal? (send p get-active-race) r)
 (set-race-in-decline! r #t)
