@@ -96,10 +96,12 @@
     (define/public (add-race! race)
       (set! races (cons race races)))
     
-    (define/public (play-turn)
-      (let* ([race-index ((strategy-pick-a-race strategy) this)])
-        (add-race! (send game take-race race-index)))
-      
+    (define (pick-a-race)
+      (when (not (get-active-race)) 
+        (let* ([race-index ((strategy-pick-a-race strategy) this)])
+          (add-race! (send game take-race race-index)))))
+
+    (define (conquer)
       (map (lambda (r)
              (let ([race (get-active-race)]
                    [tokens-to-conquer (+ 2 (length (get-tokens (send game get-world) r)))])
@@ -108,6 +110,14 @@
                             (make-list tokens-to-conquer (race-race-banner race)))))
            ((strategy-conquer strategy) this)))
     
+    (define (redeploy)
+      #f)
+
+    (define/public (play-turn)
+      (pick-a-race)
+      (conquer)
+      (redeploy))
+
     ))
 
 (define (new-player name strategy)
