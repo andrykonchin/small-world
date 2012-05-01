@@ -3,48 +3,7 @@
 (require rackunit)
 (require "utils.rkt")
 (require "maps.rkt")
-
-;; Region
-
-(struct region (terrain-type places adjacent-regions [tokens #:mutable]))
-
-(define (new-region terrain-type places adjacent-regions . tokens)
-  (region terrain-type places adjacent-regions tokens))
-
-
-;; World (map)
-
-(define world%
-  (class object%
-    (super-new)
-    
-    (init region-data)
-    
-    (field [regions (map (curry apply new-region) region-data)])
-    
-    (for* ([r (in-range (length regions))]
-           [ar (get-adjacent-regions this r)])
-      (when (not (member r (get-adjacent-regions this ar)))
-        (error "Adjacency error" r)))
-    
-    ))
-
-(define (new-world region-data)
-  (new world% [region-data region-data]))
-
-(define world-regions (class-field-accessor world% regions))
-
-(define (get-region world index)
-  (list-ref (world-regions world) index))
-
-(define (get-terrain-type world r)
-  (region-terrain-type (get-region world r)))
-
-(define (get-adjacent-regions world r)
-  (region-adjacent-regions (get-region world r)))
-
-(define (get-tokens world r) 
-  (region-tokens (get-region world r)))
+(require "world.rkt")
 
 
 ;; Races
@@ -100,9 +59,8 @@
         
         (map (lambda (r)
                (let ([race (get-active-race p)]
-                     [tokens-to-conquer (+ 2 (length (get-tokens world r)))] 
-                     [region (get-region world r)])
-                 (set-region-tokens! region (make-list tokens-to-conquer (race-race-banner race))))) 
+                     [tokens-to-conquer (+ 2 (length (get-tokens world r)))])
+                 (set-tokens! world r (make-list tokens-to-conquer (race-race-banner race))))) 
              ((strategy-conquer (player-strategy p)) this p)))
       
       (set! turn (add1 turn)))
@@ -120,6 +78,7 @@
               hill merchant mounted pillaging seafaring
               spirit stout swamp underworld wealthy))
 
+
 ;; Player
 
 (struct player (name points [races #:mutable] strategy))
@@ -129,6 +88,7 @@
 
 (define (get-active-race player) 
   (first (player-races player)))
+
 
 ;; Strategy
 
@@ -178,13 +138,3 @@
 (check-equal? (get-tokens w 2) '(amazons amazons))
 (check-equal? (send g get-turn) 2)
 (check-equal? (length (send g get-races)) 6)
-
-(check-equal? (get-terrain-type w 1) 'sea-or-lake)
-(check-equal? (get-adjacent-regions w 1) '(0 2 6))
-(check-equal? (get-terrain-type w 7) 'hills)
-(check-equal? (get-adjacent-regions w 7) '(2 3 6 8 12 13))
-
-(check-exn exn:fail? 
-           (lambda () (new-world '((border () ())
-                                   (sea-or-lake () (0 1))
-                                   (mountain () (0))))))
