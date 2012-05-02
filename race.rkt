@@ -81,8 +81,10 @@
 (define (ghouls %)
   (class %
     (super-new)
+    
     (define/override (can-conquer?)
       #t)
+    
     (define/override (flip-tokens region)
       (void))
     ))
