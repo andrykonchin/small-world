@@ -5,6 +5,7 @@
 (require "maps.rkt")
 (require "world.rkt")
 (require "race.rkt")
+(require "strategy.rkt")
 
 
 (provide new-player)
@@ -19,6 +20,8 @@
     (field [points 5])
     (field [races '()])
     
+    (set-field! player strategy this)
+    
     (define/public (get-active-race)
       (findf race-active? races))
     
@@ -26,12 +29,12 @@
       (set! races (append races (list race))))
     
     (define (pick-a-race)
-      (let* ([race-index (send strategy pick-a-race this)])
+      (let* ([race-index (send strategy pick-a-race)])
         (add-race! (send game take-race race-index))))
     
     (define/public (conquer)
       (for ([race races] #:when (race-can-conquer? race))
-        (for ([r (send strategy conquer this race)])
+        (for ([r (send strategy conquer race)])
           (let ([region (get-region (send game get-world) r)])
             (send race conquer! region)))))
     
@@ -46,5 +49,5 @@
     
     ))
 
-(define (new-player name strategy)
+(define (new-player name [strategy (new strategy%)])
   (new player% [name name] [strategy strategy]))

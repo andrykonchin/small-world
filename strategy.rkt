@@ -5,9 +5,12 @@
 (define strategy%
   (class object%
     (super-new)
-    (define/public (pick-a-race player) 0)
-    (define/public (ready-troops player) '())
-    (define/public (conquer player race) '())
-    (define/public (redeploy player race) '())
-    (define/public (go-into-decline player race) #f)
+    
+    (field [player #f])
+    
+    (define/public (pick-a-race) 0)
+    (define/public (ready-troops) '())
+    (define/public (conquer player) '())
+    (define/public (redeploy race) '())
+    (define/public (go-into-decline race) #f)
     ))

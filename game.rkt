@@ -60,7 +60,7 @@
 
 (define p1 (new-player "Vasya" (new (class strategy%
                                       (super-new)
-                                      (define/override (conquer player race)
+                                      (define/override (conquer race)
                                         '(2))))))
 (define p2 (new-player "Petya" (new strategy%)))
 
@@ -94,7 +94,7 @@
 (let* ([count 0]
        [p (new-player "Vasya" (new (class strategy%
                                      (super-new)
-                                     (define/override (conquer player race) 
+                                     (define/override (conquer race) 
                                        (set! count (add1 count))
                                        '(2)))))]
        [r1 (new-race 'berserk 'amazons)]
@@ -108,7 +108,7 @@
 ; conquer
 (let* ([p (new-player "Vasya" (new (class strategy%
                                      (super-new)
-                                     (define/override (conquer player race)
+                                     (define/override (conquer race)
                                        '(2)))))]
        [r1 (new-race 'berserk 'amazons)]
        [r2 (new-race 'alchemist 'dwarves)]
