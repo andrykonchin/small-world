@@ -29,7 +29,7 @@
         (add-race! (send game take-race race-index))))
     
     (define/public (conquer)
-      (for ([race races] #:when (race-can-conquer? race))
+      (for ([race races] #:when (send race can-conquer?))
         (for ([r (send strategy conquer race)])
           (let ([region (send (send game get-world) get-region r)])
             (send race conquer! region)))))

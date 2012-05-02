@@ -7,8 +7,6 @@
 (provide race%
          new-race
          race-active?
-         race-in-decline?
-         race-can-conquer?
          all-race-banners
          all-special-powers
          ghouls)
@@ -47,9 +45,6 @@
 
 (define race-in-decline? (class-field-accessor race% in-decline))
 (define race-active? (negate race-in-decline?))
-
-(define (race-can-conquer? race)
-  (send race can-conquer?))
 
 (define all-race-banners
   '(amazons dwarves elves ghouls giants

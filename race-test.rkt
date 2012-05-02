@@ -10,18 +10,18 @@
     (test-case "init"
       (let ([r (new-race 'berserk 'amazons)])
         (check-equal? (get-field coins r) 0)
-        (check-false (race-in-decline? r))))
+        (check-false (get-field in-decline r))))
     
     (test-case "can-conquer?"
       (let ([r (new-race 'berserk 'amazons)])
-        (check-true (race-can-conquer? r))
+        (check-true (send r can-conquer?))
         (send r decline!)
-        (check-false (race-can-conquer? r)))
+        (check-false (send r can-conquer?)))
       
       (let ([rg (new (ghouls race%))])
-        (check-true (race-can-conquer? rg))
+        (check-true (send rg can-conquer?))
         (send rg decline!)
-        (check-true (race-can-conquer? rg))))
+        (check-true (send rg can-conquer?))))
     
     (test-case "can-conquer-region?"
       (let ([race (new-race 'berserk 'amazons)]
