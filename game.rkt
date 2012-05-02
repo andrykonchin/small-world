@@ -67,9 +67,7 @@
 (define g (new game% [players (list p1 p2)]))
 (check-equal? (length (send g get-races)) 6)
 
-(check-equal? (length (send g get-players)) 2)
-(check-eq? (first (send g get-players)) p1)
-(check-eq? (second (send g get-players)) p2)
+(check-equal? (send g get-players) (list p1 p2))
 (check-equal? (send g get-turn) 1)
 
 (define r1 (first (send g get-races)))
