@@ -86,7 +86,7 @@
 (send g play-turn)
 (check-equal? (get-field races p1) (list r1))
 (check-equal? (get-field races p2) (list r2))
-(check-equal? (region-occupant-count (get-region w 2)) 2)
+(check-equal? (region-occupant-count (send w get-region 2)) 2)
 (check-equal? (send g get-turn) 2)
 (check-equal? (length (send g get-races)) 6)
 
@@ -113,7 +113,7 @@
        [r1 (new-race 'berserk 'amazons)]
        [r2 (new-race 'alchemist 'dwarves)]
        [g (new game% [players (list p)])])
-  (region-occupy! (get-region (send g get-world) 2) r1 3)
+  (region-occupy! (send (send g get-world) get-region 2) r1 3)
   (send p add-race! r2)
   (set-field! tokens-in-hand r1 0)
   (set-field! tokens-in-hand r2 15)

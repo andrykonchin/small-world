@@ -3,7 +3,6 @@
 (require rackunit)
 
 (provide new-world
-         get-region
          get-terrain-type
          get-adjacent-regions
          get-tokens
@@ -49,7 +48,6 @@
 
 (define (region-tokens-to-conquer region)
   (send region tokens-to-conquer))
-  
 
 
 ;; World (map)
@@ -67,6 +65,8 @@
       (when (not (member r (get-adjacent-regions this ar)))
         (error "Adjacency error" r)))
 
+    (define/public (get-region index)
+      (list-ref regions index))
     ))
 
 (define (new-world region-data)
@@ -74,17 +74,14 @@
 
 (define world-regions (class-field-accessor world% regions))
 
-(define (get-region world index)
-  (list-ref (world-regions world) index))
-
 (define (get-terrain-type world r)
-  (region-terrain-type (get-region world r)))
+  (region-terrain-type (send world get-region r)))
 
 (define (get-adjacent-regions world r)
-  (region-adjacent-regions (get-region world r)))
+  (region-adjacent-regions (send world get-region r)))
 
 (define (get-tokens world r)
-  (region-tokens (get-region world r)))
+  (region-tokens (send world get-region r)))
 
 
 ;; Tests
