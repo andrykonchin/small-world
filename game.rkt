@@ -4,12 +4,13 @@
 (require "utils.rkt")
 (require "maps.rkt")
 (require "world.rkt")
-(require "region.rkt")
 (require "race.rkt")
 (require "player.rkt")
 (require "strategy.rkt")
 
+(provide new-game)
 
+ 
 (define game%
   (class object%
     (super-new)
@@ -17,10 +18,14 @@
     (field [world (new-world two-player-map)])
 
     (init-field players)
-    (define/public (get-players) players)
     (for ([p players])
       (send p join-game! this))
     
+    (define/public (get-players) players)
+    
+    (define/public (add-player! player)
+      (set! players (append players (list player))))
+
     (define race-banners all-race-banners)
     (define/public (get-race-banners) race-banners)
     
@@ -55,66 +60,5 @@
       (set! turn (add1 turn)))
     ))
 
-
-;; Tests
-
-(define p1 (new-player "Vasya" (new (class strategy%
-                                      (super-new)
-                                      (define/override (conquer race)
-                                        '(2))))))
-(define p2 (new-player "Petya" (new strategy%)))
-
-(define g (new game% [players (list p1 p2)]))
-(check-equal? (length (send g get-races)) 6)
-
-(check-equal? (send g get-players) (list p1 p2))
-(check-equal? (send g get-turn) 1)
-
-(define r1 (first (send g get-races)))
-(define r2 (second (send g get-races)))
-
-(check-equal? (length (send g get-race-banners)) 8)
-(check-equal? (first (send g get-race-banners)) 'humans)
-
-(define w (get-field world g))
-
-(set-field! tokens-in-hand r1 5)
-
-
-(send g play-turn)
-(check-equal? (get-field races p1) (list r1))
-(check-equal? (get-field races p2) (list r2))
-(check-equal? (get-field occupant-count (send w get-region 2)) 2)
-(check-equal? (send g get-turn) 2)
-(check-equal? (length (send g get-races)) 6)
-
-; conquer
-(let* ([count 0]
-       [p (new-player "Vasya" (new (class strategy%
-                                     (super-new)
-                                     (define/override (conquer race) 
-                                       (set! count (add1 count))
-                                       '(2)))))]
-       [r1 (new-race 'berserk 'amazons)]
-       [r2 (new-race 'alchemist 'dwarves)]
-       [g (new game% [players (list p)])])
-  (send p add-race! r1)
-  (send p add-race! r2)
-  (send p conquer)
-  (check-equal? count 2))
-
-; conquer
-(let* ([p (new-player "Vasya" (new (class strategy%
-                                     (super-new)
-                                     (define/override (conquer race)
-                                       '(2)))))]
-       [r1 (new-race 'berserk 'amazons)]
-       [r2 (new-race 'alchemist 'dwarves)]
-       [g (new game% [players (list p)])])
-  (send (send (get-field world g) get-region 2) occupy! r1 3)
-  (send p add-race! r2)
-  (set-field! tokens-in-hand r1 0)
-  (set-field! tokens-in-hand r2 15)
-  (send p conquer)
-  (check-equal? (get-field tokens-in-hand r1) 2)
-  (check-equal? (get-field tokens-in-hand r2) 10))
+(define (new-game . players)
+  (make-object game% players))
