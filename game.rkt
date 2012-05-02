@@ -14,13 +14,12 @@
   (class object%
     (super-new)
     
+    (field [world (new-world two-player-map)])
+
     (init-field players)
     (define/public (get-players) players)
     (for ([p players])
-      (set-field! game p this))
-    
-    (define world (new-world two-player-map))
-    (define/public (get-world) world)
+      (send p join-game! this))
     
     (define race-banners all-race-banners)
     (define/public (get-race-banners) race-banners)
@@ -79,7 +78,7 @@
 (check-equal? (length (send g get-race-banners)) 8)
 (check-equal? (first (send g get-race-banners)) 'humans)
 
-(define w (send g get-world))
+(define w (get-field world g))
 
 (set-field! tokens-in-hand r1 5)
 
@@ -114,11 +113,10 @@
        [r1 (new-race 'berserk 'amazons)]
        [r2 (new-race 'alchemist 'dwarves)]
        [g (new game% [players (list p)])])
-  (send (send (send g get-world) get-region 2) occupy! r1 3)
+  (send (send (get-field world g) get-region 2) occupy! r1 3)
   (send p add-race! r2)
   (set-field! tokens-in-hand r1 0)
   (set-field! tokens-in-hand r2 15)
   (send p conquer)
   (check-equal? (get-field tokens-in-hand r1) 2)
   (check-equal? (get-field tokens-in-hand r2) 10))
-

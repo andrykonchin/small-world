@@ -13,10 +13,15 @@
     (init-field name)
     (init-field strategy)
     (field [game #f])
+    (field [world #f])
     (field [points 5])
     (field [races '()])
     
     (set-field! player strategy this)
+    
+    (define/public (join-game! g)
+      (set! game g)
+      (set! world (get-field world g)))
     
     (define/public (get-active-race)
       (findf race-active? races))
@@ -31,7 +36,7 @@
     (define/public (conquer)
       (for ([race races] #:when (send race can-conquer?))
         (for ([r (send strategy conquer race)])
-          (let ([region (send (send game get-world) get-region r)])
+          (let ([region (send world get-region r)])
             (send race conquer! region)))))
     
     (define (redeploy)
