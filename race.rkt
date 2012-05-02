@@ -10,7 +10,6 @@
          race-active?
          race-in-decline?
          race-can-conquer?
-         race-decline!
          all-race-banners
          all-special-powers)
 
@@ -31,6 +30,9 @@
     
     (define/public (can-conquer?)
       (not in-decline))
+    
+    (define/public (decline!)
+      (set! in-decline #t))
     
     (define/public (withdraw! token-count)
       (check >= token-count 1)
@@ -60,9 +62,6 @@
 (define (race-can-conquer? race)
   (send race can-conquer?))
 
-(define (race-decline! race)
-  (set-field! in-decline race #t))
-
 (define all-race-banners
   '(amazons dwarves elves ghouls giants
             halflings humans orcs ratmen skeletons
@@ -91,12 +90,12 @@
 ; can-conquer?
 (let ([r (new-race 'berserk 'amazons)])
   (check-true (race-can-conquer? r))
-  (race-decline! r)
+  (send r decline!)
   (check-false (race-can-conquer? r)))
 
 (let ([rg (new (ghouls race%) [race-banner #f] [special-power #f])])
   (check-true (race-can-conquer? rg))
-  (race-decline! rg)
+  (send rg decline!)
   (check-true (race-can-conquer? rg)))
 
 ; can-conquer-region?

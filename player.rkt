@@ -81,7 +81,7 @@
   (check-false (send p get-active-race))
   (send p add-race! r)
   (check-equal? (send p get-active-race) r)
-  (race-decline! r)
+  (send r decline!)
   (check-false (send p get-active-race)))
 
 ; add-race!
