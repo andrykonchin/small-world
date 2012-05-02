@@ -87,7 +87,7 @@
 (send g play-turn)
 (check-equal? (get-field races p1) (list r1))
 (check-equal? (get-field races p2) (list r2))
-(check-equal? (region-occupant-count (send w get-region 2)) 2)
+(check-equal? (get-field occupant-count (send w get-region 2)) 2)
 (check-equal? (send g get-turn) 2)
 (check-equal? (length (send g get-races)) 6)
 

@@ -2,9 +2,7 @@
 
 (provide new-region
          region-tokens
-         region-adjacent-regions
-         region-occupant-race
-         region-occupant-count)
+         region-adjacent-regions)
 
 
 (define region%

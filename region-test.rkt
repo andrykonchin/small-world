@@ -11,8 +11,8 @@
       (let ([region (new-region 'farmlands '() '())]
             [race 'some-race])
         (send region occupy! race 2)
-        (check-equal? (region-occupant-race region) 'some-race)
-        (check-equal? (region-occupant-count region) 2)))
+        (check-equal? (get-field occupant-race region) 'some-race)
+        (check-equal? (get-field occupant-count region) 2)))
     
     (test-case "tokens-to-conquer"
       (let ([r1 (new-region 'farmlands '() '())]
