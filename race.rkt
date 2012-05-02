@@ -2,6 +2,7 @@
 
 (require rackunit)
 (require "world.rkt")
+(require "region.rkt")
 
 (provide new-race
          race-active?

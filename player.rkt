@@ -1,9 +1,5 @@
 #lang racket
 
-(require rackunit)
-(require "utils.rkt")
-(require "maps.rkt")
-(require "world.rkt")
 (require "race.rkt")
 (require "strategy.rkt")
 
