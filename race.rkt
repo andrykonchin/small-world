@@ -4,12 +4,14 @@
 (require "world.rkt")
 (require "region.rkt")
 
-(provide new-race
+(provide race%
+         new-race
          race-active?
          race-in-decline?
          race-can-conquer?
          all-race-banners
-         all-special-powers)
+         all-special-powers
+         ghouls)
 
 (define race%
   (class object%
@@ -66,31 +68,3 @@
     (define/override (can-conquer?)
       #t)
     ))
-
-
-;; Tests
-
-(let ([r (new-race 'berserk 'amazons)])
-  (check-equal? (get-field coins r) 0)
-  (check-false (race-in-decline? r)))
-
-; can-conquer?
-(let ([r (new-race 'berserk 'amazons)])
-  (check-true (race-can-conquer? r))
-  (send r decline!)
-  (check-false (race-can-conquer? r)))
-
-(let ([rg (new (ghouls race%))])
-  (check-true (race-can-conquer? rg))
-  (send rg decline!)
-  (check-true (race-can-conquer? rg)))
-
-; can-conquer-region?
-(let ([race (new-race 'berserk 'amazons)]
-      [region (new (class object% 
-                     (super-new) 
-                     (define/public (tokens-to-conquer) 5)))])
-  (set-field! tokens-in-hand race 4)
-  (check-false (send race can-conquer-region? region))
-  (set-field! tokens-in-hand race 5)
-  (check-true (send race can-conquer-region? region)))
