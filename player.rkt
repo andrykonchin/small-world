@@ -7,10 +7,7 @@
 (require "race.rkt")
 
 
-(provide new-player
-         player-name
-         player-points
-         player-races)
+(provide new-player)
 
 (define player%
   (class object%
@@ -51,8 +48,3 @@
 
 (define (new-player name strategy)
   (new player% [name name] [strategy strategy]))
-
-(define player-name (class-field-accessor player% name))
-(define player-strategy (class-field-accessor player% strategy))
-(define player-points (class-field-accessor player% points))
-(define player-races (class-field-accessor player% races))

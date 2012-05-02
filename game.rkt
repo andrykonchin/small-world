@@ -71,8 +71,6 @@
 (check-eq? (first (send g get-players)) p1)
 (check-eq? (second (send g get-players)) p2)
 (check-equal? (send g get-turn) 1)
-(check-equal? (player-points p1) 5)
-(check-equal? (player-points p2) 5)
 
 (define r1 (first (send g get-races)))
 (define r2 (second (send g get-races)))
@@ -86,8 +84,8 @@
 
 
 (send g play-turn)
-(check-equal? (player-races p1) (list r1))
-(check-equal? (player-races p2) (list r2))
+(check-equal? (get-field races p1) (list r1))
+(check-equal? (get-field races p2) (list r2))
 (check-equal? (region-occupant-count (get-region w 2)) 2)
 (check-equal? (send g get-turn) 2)
 (check-equal? (length (send g get-races)) 6)
