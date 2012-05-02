@@ -9,7 +9,7 @@
     (field [player #f])
     
     (define/public (pick-a-race) 0)
-    (define/public (ready-troops) '())
+    (define/public (ready-troops race) '())
     (define/public (conquer player) '())
     (define/public (redeploy race) '())
     (define/public (go-into-decline? race) #f)

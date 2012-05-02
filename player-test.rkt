@@ -91,5 +91,7 @@
       (let* ([p (new-player "Vasya")]
              [g (new-game)])
         (send p join-game! g)
+        (send p play-turn!)
+        (send p play-turn!)
         (send p play-turn!)))
     ))

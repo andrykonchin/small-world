@@ -42,6 +42,16 @@
       (set! tokens-in-hand
             (+ tokens-in-hand (get-field occupant-count region) -1)))
     
+    (define/public (ready-troops! region token-count)
+      (when (not (equal? (get-field occupant-race region) this))
+        (error "Region not occupied" region this))
+      (when (< (get-field occupant-count region) token-count)
+        (error "Not enough tokens" region token-count))
+      
+      (set-field! occupant-count region 
+                  (- (get-field occupant-count region) token-count))
+      (set! tokens-in-hand (+ tokens-in-hand token-count)))
+    
     (define/public (can-conquer-region? region)
       (>= tokens-in-hand 
           (send region tokens-to-conquer)))

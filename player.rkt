@@ -38,6 +38,13 @@
         (add-coins! (- race-index))
         (add-race! (send game take-race! race-index))))
     
+    (define/public (ready-troops!)
+      (for ([race races] #:when (send race can-conquer?))
+        (for ([pair (send strategy ready-troops race)])
+          (let ([region (send world get-region (car pair))]
+                [token-count (cdr pair)])
+            (send race ready-troops! region token-count)))))
+    
     (define/public (conquer!)
       (for ([race races] #:when (send race can-conquer?))
         (for ([r (send strategy conquer race)])
@@ -57,8 +64,9 @@
                  (send strategy go-into-decline? active-race))
             (send active-race decline!)
             (begin
-              (when (not active-race)
-                (pick-a-race!))
+              (if (not active-race)
+                  (pick-a-race!)
+                  (ready-troops!))
               (conquer!)
               (redeploy!)))
         (score-victory-coins!)))
