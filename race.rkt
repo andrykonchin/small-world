@@ -34,10 +34,10 @@
           (send region tokens-to-conquer)))
     
     (define/public (conquer! region)
-      (let ([tokens-to-conquer (region-tokens-to-conquer region)])
+      (let ([tokens-to-conquer (send region tokens-to-conquer)])
         (when (can-conquer-region? region)
           (set! tokens-in-hand (- tokens-in-hand tokens-to-conquer))
-          (region-occupy! region this tokens-to-conquer))))
+          (send region occupy! this tokens-to-conquer))))
     ))
 
 (define (new-race special-power race-banner)

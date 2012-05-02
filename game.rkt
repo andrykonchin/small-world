@@ -114,7 +114,7 @@
        [r1 (new-race 'berserk 'amazons)]
        [r2 (new-race 'alchemist 'dwarves)]
        [g (new game% [players (list p)])])
-  (region-occupy! (send (send g get-world) get-region 2) r1 3)
+  (send (send (send g get-world) get-region 2) occupy! r1 3)
   (send p add-race! r2)
   (set-field! tokens-in-hand r1 0)
   (set-field! tokens-in-hand r2 15)
