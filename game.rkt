@@ -71,12 +71,7 @@
 (check-equal? (player-points p2) 5)
 
 (define r1 (first (send g get-races)))
-(check-equal? (race-special-power r1) 'alchemist)
-(check-equal? (race-race-banner r1) 'amazons)
-
 (define r2 (second (send g get-races)))
-(check-equal? (race-special-power r2) 'berserk)
-(check-equal? (race-race-banner r2) 'dwarves)
 
 (check-equal? (length (send g get-race-banners)) 8)
 (check-equal? (first (send g get-race-banners)) 'humans)

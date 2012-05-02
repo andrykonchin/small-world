@@ -3,9 +3,7 @@
 (require rackunit)
 (require "world.rkt")
 
-(provide new-race 
-         race-race-banner
-         race-special-power
+(provide new-race
          race-coins
          race-active?
          race-in-decline?
@@ -14,19 +12,11 @@
          all-special-powers)
 
 (define race%
-  (class* object% (writable<%>)
+  (class object%
     (super-new)
-    (init-field race-banner)
-    (init-field special-power)
     (field [coins 0])
     (field [in-decline #f])
     (field [tokens-in-hand 0])
-    
-    (define/public (custom-write port)
-      (write (list special-power race-banner) port))
-    
-    (define/public (custom-display port)
-      (display (list special-power race-banner) port))
     
     (define/public (can-conquer?)
       (not in-decline))
@@ -51,10 +41,8 @@
     ))
 
 (define (new-race special-power race-banner)
-  (new race% [race-banner race-banner] [special-power special-power]))
+  (new race%))
 
-(define race-race-banner (class-field-accessor race% race-banner))
-(define race-special-power (class-field-accessor race% special-power))
 (define race-coins (class-field-accessor race% coins))
 (define race-in-decline? (class-field-accessor race% in-decline))
 (define race-active? (negate race-in-decline?))
@@ -93,7 +81,7 @@
   (send r decline!)
   (check-false (race-can-conquer? r)))
 
-(let ([rg (new (ghouls race%) [race-banner #f] [special-power #f])])
+(let ([rg (new (ghouls race%))])
   (check-true (race-can-conquer? rg))
   (send rg decline!)
   (check-true (race-can-conquer? rg)))
