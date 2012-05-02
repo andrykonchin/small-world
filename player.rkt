@@ -19,6 +19,9 @@
     
     (set-field! player strategy this)
     
+    (define (add-points! x)
+      (set! points (+ points x)))
+    
     (define/public (join-game! g)
       (set! game g)
       (set! world (get-field world g)))
@@ -27,11 +30,13 @@
       (findf race-active? races))
     
     (define/public (add-race! race)
+      (add-points! (send race take-coins!))
       (set! races (append races (list race))))
     
-    (define (pick-a-race)
+    (define/public (pick-a-race!)
       (let* ([race-index (send strategy pick-a-race)])
-        (add-race! (send game take-race race-index))))
+        (add-points! (- race-index))
+        (add-race! (send game take-race! race-index))))
     
     (define/public (conquer)
       (for ([race races] #:when (send race can-conquer?))
@@ -44,7 +49,7 @@
     
     (define/public (play-turn)
       (when (not (get-active-race))
-        (pick-a-race))
+        (pick-a-race!))
       (conquer)
       (redeploy))
     

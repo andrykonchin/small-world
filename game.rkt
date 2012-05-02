@@ -21,35 +21,33 @@
     (for ([p players])
       (send p join-game! this))
     
-    (define/public (add-player! player)
-      (set! players (append players (list player))))
-
     (field [race-banners all-race-banners])
     (field [special-powers all-special-powers])
-    
-    (define turn 1)
-    (define/public (get-turn) turn)
-    
+
     (define (add-new-race!)
       (let ([race (new-race (first special-powers) (first race-banners))])
         (set! races (append races (list race)))
         (set! race-banners (rest race-banners))
         (set! special-powers (rest special-powers))))
     
-    (define races '())
-    
+    (field [races '()])
     (for ([i (in-range 6)])
       (add-new-race!))
     
-    (define/public (get-races) races)
+    (field [turn 1])
     
-    (define/public (take-race index)
+    (define/public (add-player! player)
+      (set! players (append players (list player))))
+
+    (define/public (take-race! index)
+      (for ([skipped-race (take races index)])
+        (send skipped-race add-coin!))
       (let ([race (list-ref races index)])
         (set! races (remove-nth races index))
         (add-new-race!)
         race))
     
-    (define/public (play-turn)
+    (define/public (play-turn!)
       (for ([p players])
         (send p play-turn))
       (set! turn (add1 turn)))

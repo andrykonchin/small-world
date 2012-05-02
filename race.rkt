@@ -17,6 +17,14 @@
     (field [coins 0])
     (field [in-decline #f])
     (field [tokens-in-hand 0])
+
+    (define/public (add-coin!)
+      (set! coins (add1 coins)))
+    
+    (define/public (take-coins!)
+      (let ([coins-to-take coins])
+        (set! coins 0)
+        coins-to-take))
     
     (define/public (can-conquer?)
       (not in-decline))
