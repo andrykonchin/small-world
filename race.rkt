@@ -30,8 +30,13 @@
       (not in-decline))
     
     (define/public (decline!)
-      (set! in-decline #t))
+      (set! in-decline #t)
+      (for ([region occupied-regions])
+        (flip-tokens-in-region region)))
     
+    (define/public (flip-tokens-in-region region)
+      (set-field! occupant-count region 1))
+      
     (define/public (withdraw! region)
       (set! occupied-regions (remove region occupied-regions))
       (set! tokens-in-hand
