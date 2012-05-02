@@ -14,13 +14,13 @@
     (init-field strategy)
     (field [game #f])
     (field [world #f])
-    (field [points 5])
+    (field [coins 5])
     (field [races '()])
     
     (set-field! player strategy this)
     
     (define (add-points! x)
-      (set! points (+ points x)))
+      (set! coins (+ coins x)))
     
     (define/public (join-game! g)
       (set! game g)

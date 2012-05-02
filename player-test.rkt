@@ -16,9 +16,9 @@
       (let ([p (new-player "Vasya")])
         (check-equal? (get-field name p) "Vasya")))
     
-    (test-case "points"
+    (test-case "coins"
       (let ([p (new-player "Vasya")])
-        (check-equal? (get-field points p) 5)))
+        (check-equal? (get-field coins p) 5)))
     
     (test-case "add-race!"
       (let* ([p (new-player "Vasya")]
@@ -26,10 +26,10 @@
              [r2 (new-race 'alchemist 'dwarves)])
         (send r1 add-coin!)
         (send r1 add-coin!)
-        (check-equal? (get-field points p) 5)
+        (check-equal? (get-field coins p) 5)
         
         (send p add-race! r1)
-        (check-equal? (get-field points p) 7)
+        (check-equal? (get-field coins p) 7)
 
         (send p add-race! r2)
         (check-equal? (get-field races p) (list r1 r2))))
@@ -51,13 +51,13 @@
              [race (list-ref (get-field races g) 2)])
         (send p join-game! g)
         (check-false (send p get-active-race))
-        (check-equal? (get-field points p) 5)
+        (check-equal? (get-field coins p) 5)
         (check-equal? (get-field coins (first (get-field races g))) 0)
         (check-equal? (get-field coins (second (get-field races g))) 0)
 
         (send p pick-a-race!)
         (check-equal? (send p get-active-race) race)
-        (check-equal? (get-field points p) 3)
+        (check-equal? (get-field coins p) 3)
         (check-equal? (get-field coins (first (get-field races g))) 1)
         (check-equal? (get-field coins (second (get-field races g))) 1)
         ))
