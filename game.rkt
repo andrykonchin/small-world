@@ -103,3 +103,16 @@
   (send p conquer)
   (check-equal? count 2))
 
+; conquer
+(let* ([p (new-player "Vasya" (new-strategy #:conquer (lambda (player race) '(2))))]
+       [r1 (new-race 'berserk 'amazons)]
+       [r2 (new-race 'alchemist 'dwarves)]
+       [g (new game% [players (list p)])])
+  (region-occupy! (get-region (send g get-world) 2) r1 3)
+  (send p add-race! r2)
+  (set-field! tokens-in-hand r1 0)
+  (set-field! tokens-in-hand r2 15)
+  (send p conquer)
+  (check-equal? (get-field tokens-in-hand r1) 2)
+  (check-equal? (get-field tokens-in-hand r2) 10))
+

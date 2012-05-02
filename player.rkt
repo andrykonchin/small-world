@@ -38,6 +38,11 @@
         (for ([r ((strategy-conquer strategy) this race)])
           (let* ([region (get-region (send game get-world) r)]
                  [tokens-to-conquer (region-tokens-to-conquer region)])
+            (when (region-occupant-race region)
+              (race-withdraw! (region-occupant-race region)
+                              (region-occupant-count region)))
+            (set-field! tokens-in-hand race (- (get-field tokens-in-hand race) 
+                                               tokens-to-conquer))
             (region-occupy! region race tokens-to-conquer)))))
     
     (define (redeploy)
@@ -85,6 +90,7 @@
   (decline! r)
   (check-false (send p get-active-race)))
 
+; add-race!
 (let* (
        [p (new-player "Vasya" #f)]
        [r1 (new-race 'berserk 'amazons)]

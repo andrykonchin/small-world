@@ -10,6 +10,7 @@
          in-decline?
          can-conquer?
          decline!
+         race-withdraw!
          all-race-banners
          all-special-powers)
 
@@ -20,6 +21,7 @@
     (init-field special-power)
     (field [coins 0])
     (field [in-decline #f])
+    (field [tokens-in-hand 0])
     
     (define/public (custom-write port)
       (write (list special-power race-banner) port))
@@ -28,6 +30,11 @@
       (display (list special-power race-banner) port))
     
     (define/public (can-conquer?)
+      (not in-decline))
+    
+    (define/public (withdraw! token-count)
+      (check >= token-count 1)
+      (set! tokens-in-hand (+ tokens-in-hand token-count -1))
       (not in-decline))
     
     ))
@@ -47,6 +54,8 @@
 (define (decline! race)
   (set-field! in-decline race #t))
 
+(define (race-withdraw! race token-count)
+  (send race withdraw! token-count))
 
 (define all-race-banners
   '(amazons dwarves elves ghouls giants
