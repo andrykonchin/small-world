@@ -1,6 +1,7 @@
 #lang racket
 
 (require rackunit)
+(require "world.rkt")
 
 (provide new-race 
          race-race-banner
@@ -37,6 +38,13 @@
       (set! tokens-in-hand (+ tokens-in-hand token-count -1))
       (not in-decline))
     
+    (define/public (conquer! region)
+      (let ([tokens-to-conquer (region-tokens-to-conquer region)])
+        (when (region-occupant-race region)
+          (race-withdraw! (region-occupant-race region)
+                          (region-occupant-count region)))
+        (set! tokens-in-hand (- tokens-in-hand tokens-to-conquer))
+        (region-occupy! region this tokens-to-conquer)))
     ))
 
 (define (new-race special-power race-banner)
