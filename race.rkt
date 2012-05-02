@@ -32,11 +32,11 @@
     (define/public (decline!)
       (set! in-decline #t)
       (for ([region occupied-regions])
-        (flip-tokens-in-region region)))
+        (flip-tokens region)))
     
-    (define/public (flip-tokens-in-region region)
+    (define/public (flip-tokens region)
       (set-field! occupant-count region 1))
-      
+    
     (define/public (withdraw! region)
       (set! occupied-regions (remove region occupied-regions))
       (set! tokens-in-hand
@@ -56,7 +56,7 @@
     (define/public (score-coins)
       (for/sum ([region occupied-regions])
                (score-coins-for-region region)))
-
+    
     (define/public (score-coins-for-region region)
       1)
     ))
@@ -83,4 +83,6 @@
     (super-new)
     (define/override (can-conquer?)
       #t)
+    (define/override (flip-tokens region)
+      (void))
     ))
