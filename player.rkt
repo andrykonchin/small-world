@@ -69,26 +69,3 @@
                       #:redeploy [redeploy (lambda (player) #f)]
                       #:go-into-decline [go-into-decline (lambda (player) #f)])
   (strategy pick-a-race ready-troops conquer redeploy go-into-decline))
-
-
-;; Tests
-
-(let ([p (new-player "Vasya" #f)])
-  (check-equal? (player-name p) "Vasya"))
-
-(let ([p (new-player "Vasya" #f)]
-      [r (new-race 'berserk 'amazons)])
-  (check-false (send p get-active-race))
-  (send p add-race! r)
-  (check-equal? (send p get-active-race) r)
-  (send r decline!)
-  (check-false (send p get-active-race)))
-
-; add-race!
-(let* (
-       [p (new-player "Vasya" #f)]
-       [r1 (new-race 'berserk 'amazons)]
-       [r2 (new-race 'alchemist 'dwarves)])
-  (send p add-race! r1)
-  (send p add-race! r2)
-  (check-equal? (player-races p) (list r1 r2)))

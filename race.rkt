@@ -4,7 +4,6 @@
 (require "world.rkt")
 
 (provide new-race
-         race-coins
          race-active?
          race-in-decline?
          race-can-conquer?
@@ -43,7 +42,6 @@
 (define (new-race special-power race-banner)
   (new race%))
 
-(define race-coins (class-field-accessor race% coins))
 (define race-in-decline? (class-field-accessor race% in-decline))
 (define race-active? (negate race-in-decline?))
 
@@ -72,7 +70,7 @@
 ;; Tests
 
 (let ([r (new-race 'berserk 'amazons)])
-  (check-equal? (race-coins r) 0)
+  (check-equal? (get-field coins r) 0)
   (check-false (race-in-decline? r)))
 
 ; can-conquer?
