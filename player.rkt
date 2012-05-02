@@ -51,12 +51,17 @@
       (for ([race races])
         (add-coins! (send race score-coins))))
     
-    (define/public (play-turn)
-      (when (not (get-active-race))
-        (pick-a-race!))
-      (conquer!)
-      (redeploy!)
-      (score-victory-coins!))
+    (define/public (play-turn!)
+      (let ([active-race (get-active-race)])
+        (if (and active-race
+                 (send strategy go-into-decline? active-race))
+            (send active-race decline!)
+            (begin
+              (when (not active-race)
+                (pick-a-race!))
+              (conquer!)
+              (redeploy!)))
+        (score-victory-coins!)))
     ))
 
 (define (new-player name [strategy (new strategy%)])

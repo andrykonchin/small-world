@@ -12,5 +12,5 @@
     (define/public (ready-troops) '())
     (define/public (conquer player) '())
     (define/public (redeploy race) '())
-    (define/public (go-into-decline race) #f)
+    (define/public (go-into-decline? race) #f)
     ))

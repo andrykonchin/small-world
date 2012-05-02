@@ -30,7 +30,7 @@
         
         (send p add-race! r1)
         (check-equal? (get-field coins p) 7)
-
+        
         (send p add-race! r2)
         (check-equal? (get-field races p) (list r1 r2))))
     
@@ -45,7 +45,7 @@
     
     (test-case "pick-a-race"
       (let* ([p (new-player "Vasya" (new (class strategy% (super-new)
-                                          (define/override (pick-a-race) 2))))]
+                                           (define/override (pick-a-race) 2))))]
              [g (new-game)]
              [race (list-ref (get-field races g) 2)])
         (send p join-game! g)
@@ -53,7 +53,7 @@
         (check-equal? (get-field coins p) 5)
         (check-equal? (get-field coins (first (get-field races g))) 0)
         (check-equal? (get-field coins (second (get-field races g))) 0)
-
+        
         (send p pick-a-race!)
         (check-equal? (send p get-active-race) race)
         (check-equal? (get-field coins p) 3)
@@ -74,7 +74,7 @@
         (send p add-race! r2)
         (send p conquer!)
         (check-equal? count 2)))
-
+    
     (test-case "score-victory-coins!"
       (let* ([p (new-player "Vasya")]
              [r1 (new (class race% (super-new)
@@ -86,4 +86,10 @@
         (check-equal? (get-field coins p) 5)
         (send p score-victory-coins!)
         (check-equal? (get-field coins p) 12)))
+    
+    (test-case "play-turn!"
+      (let* ([p (new-player "Vasya")]
+             [g (new-game)])
+        (send p join-game! g)
+        (send p play-turn!)))
     ))
