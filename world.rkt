@@ -3,7 +3,6 @@
 (require rackunit)
 
 (provide new-world
-         get-terrain-type
          get-adjacent-regions
          get-tokens
          region-tokens
@@ -74,9 +73,6 @@
 
 (define world-regions (class-field-accessor world% regions))
 
-(define (get-terrain-type world r)
-  (region-terrain-type (send world get-region r)))
-
 (define (get-adjacent-regions world r)
   (region-adjacent-regions (send world get-region r)))
 
@@ -94,8 +90,8 @@
                        (mountain (mine) (0 1 3))
                        (hills () (0 2) lost-tribe))))
 
-(check-equal? (get-terrain-type w 1) 'sea-or-lake)
-(check-equal? (get-terrain-type w 2) 'mountain)
+(check-equal? (get-field terrain-type (send w get-region 1)) 'sea-or-lake)
+(check-equal? (get-field terrain-type (send w get-region 2)) 'mountain)
 
 (check-equal? (get-adjacent-regions w 1) '(0 2))
 (check-equal? (get-adjacent-regions w 2) '(0 1 3))
