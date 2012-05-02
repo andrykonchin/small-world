@@ -83,6 +83,9 @@
 
 (define w (send g get-world))
 
+(set-field! tokens-in-hand r1 5)
+
+
 (send g play-turn)
 (check-equal? (player-races p1) (list r1))
 (check-equal? (player-races p2) (list r2))

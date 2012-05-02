@@ -38,13 +38,18 @@
       (set! tokens-in-hand (+ tokens-in-hand token-count -1))
       (not in-decline))
     
+    (define/public (can-conquer-region? region)
+      (>= tokens-in-hand 
+          (send region tokens-to-conquer)))
+    
     (define/public (conquer! region)
       (let ([tokens-to-conquer (region-tokens-to-conquer region)])
-        (when (region-occupant-race region)
-          (race-withdraw! (region-occupant-race region)
-                          (region-occupant-count region)))
-        (set! tokens-in-hand (- tokens-in-hand tokens-to-conquer))
-        (region-occupy! region this tokens-to-conquer)))
+        (when (can-conquer-region? region)
+          (when (region-occupant-race region)
+            (race-withdraw! (region-occupant-race region)
+                            (region-occupant-count region)))
+          (set! tokens-in-hand (- tokens-in-hand tokens-to-conquer))
+          (region-occupy! region this tokens-to-conquer))))
     ))
 
 (define (new-race special-power race-banner)
@@ -100,3 +105,13 @@
   (check-true (race-can-conquer? rg))
   (race-decline! rg)
   (check-true (race-can-conquer? rg)))
+
+; can-conquer-region?
+(let ([race (new-race 'berserk 'amazons)]
+      [region (new (class object% 
+                     (super-new) 
+                     (define/public (tokens-to-conquer) 5)))])
+  (set-field! tokens-in-hand race 4)
+  (check-false (send race can-conquer-region? region))
+  (set-field! tokens-in-hand race 5)
+  (check-true (send race can-conquer-region? region)))
