@@ -6,6 +6,7 @@
 (require "world.rkt")
 (require "race.rkt")
 (require "player.rkt")
+(require "strategy.rkt")
 
 
 (define game%
@@ -57,8 +58,11 @@
 
 ;; Tests
 
-(define p1 (new-player "Vasya" (new-strategy #:conquer (lambda (player race) '(2)))))
-(define p2 (new-player "Petya" (new-strategy)))
+(define p1 (new-player "Vasya" (new (class strategy%
+                                      (super-new)
+                                      (define/override (conquer player race)
+                                        '(2))))))
+(define p2 (new-player "Petya" (new strategy%)))
 
 (define g (new game% [players (list p1 p2)]))
 (check-equal? (length (send g get-races)) 6)
@@ -90,9 +94,11 @@
 
 ; conquer
 (let* ([count 0]
-       [p (new-player "Vasya" (new-strategy #:conquer (lambda (player race) 
-                                                        (set! count (add1 count)) 
-                                                        '(2))))]
+       [p (new-player "Vasya" (new (class strategy%
+                                     (super-new)
+                                     (define/override (conquer player race) 
+                                       (set! count (add1 count))
+                                       '(2)))))]
        [r1 (new-race 'berserk 'amazons)]
        [r2 (new-race 'alchemist 'dwarves)]
        [g (new game% [players (list p)])])
@@ -102,7 +108,10 @@
   (check-equal? count 2))
 
 ; conquer
-(let* ([p (new-player "Vasya" (new-strategy #:conquer (lambda (player race) '(2))))]
+(let* ([p (new-player "Vasya" (new (class strategy%
+                                     (super-new)
+                                     (define/override (conquer player race)
+                                       '(2)))))]
        [r1 (new-race 'berserk 'amazons)]
        [r2 (new-race 'alchemist 'dwarves)]
        [g (new game% [players (list p)])])
