@@ -7,10 +7,10 @@
          race-race-banner
          race-special-power
          race-coins
-         active?
-         in-decline?
-         can-conquer?
-         decline!
+         race-active?
+         race-in-decline?
+         race-can-conquer?
+         race-decline!
          race-withdraw!
          all-race-banners
          all-special-powers)
@@ -53,13 +53,13 @@
 (define race-race-banner (class-field-accessor race% race-banner))
 (define race-special-power (class-field-accessor race% special-power))
 (define race-coins (class-field-accessor race% coins))
-(define in-decline? (class-field-accessor race% in-decline))
-(define active? (negate in-decline?))
+(define race-in-decline? (class-field-accessor race% in-decline))
+(define race-active? (negate race-in-decline?))
 
-(define (can-conquer? race)
+(define (race-can-conquer? race)
   (send race can-conquer?))
 
-(define (decline! race)
+(define (race-decline! race)
   (set-field! in-decline race #t))
 
 (define (race-withdraw! race token-count)
@@ -88,15 +88,15 @@
 
 (let ([r (new-race 'berserk 'amazons)])
   (check-equal? (race-coins r) 0)
-  (check-false (in-decline? r)))
+  (check-false (race-in-decline? r)))
 
 ; can-conquer?
 (let ([r (new-race 'berserk 'amazons)])
-  (check-true (can-conquer? r))
-  (decline! r)
-  (check-false (can-conquer? r)))
+  (check-true (race-can-conquer? r))
+  (race-decline! r)
+  (check-false (race-can-conquer? r)))
 
 (let ([rg (new (ghouls race%) [race-banner #f] [special-power #f])])
-  (check-true (can-conquer? rg))
-  (decline! rg)
-  (check-true (can-conquer? rg)))
+  (check-true (race-can-conquer? rg))
+  (race-decline! rg)
+  (check-true (race-can-conquer? rg)))

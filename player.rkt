@@ -24,7 +24,7 @@
     (field [races '()])
     
     (define/public (get-active-race)
-      (findf active? races))
+      (findf race-active? races))
     
     (define/public (add-race! race)
       (set! races (append races (list race))))
@@ -34,7 +34,7 @@
         (add-race! (send game take-race race-index))))
     
     (define/public (conquer)
-      (for ([race races] #:when (can-conquer? race))
+      (for ([race races] #:when (race-can-conquer? race))
         (for ([r ((strategy-conquer strategy) this race)])
           (let ([region (get-region (send game get-world) r)])
             (send race conquer! region)))))
@@ -81,7 +81,7 @@
   (check-false (send p get-active-race))
   (send p add-race! r)
   (check-equal? (send p get-active-race) r)
-  (decline! r)
+  (race-decline! r)
   (check-false (send p get-active-race)))
 
 ; add-race!
