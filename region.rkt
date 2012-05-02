@@ -30,5 +30,3 @@
 
 (define region-adjacent-regions (class-field-accessor region% adjacent-regions))
 (define region-tokens (class-field-accessor region% tokens))
-(define region-occupant-race (class-field-accessor region% occupant-race))
-(define region-occupant-count (class-field-accessor region% occupant-count))
