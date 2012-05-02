@@ -6,6 +6,7 @@
 
 (provide race-test-suite) 
 
+
 (define race-test-suite
   (test-suite "race"
     (test-case "init"
@@ -45,19 +46,3 @@
         (check-equal? (get-field tokens-in-hand race1) 2)
         (check-equal? (get-field tokens-in-hand race2) 10)))
     ))
-
-
-#;(let* ([p (new-player "Vasya" (new (class strategy%
-                                       (super-new)
-                                       (define/override (conquer race)
-                                         '(2)))))]
-         [r1 (new-race 'berserk 'amazons)]
-         [r2 (new-race 'alchemist 'dwarves)]
-         [g (new game% [players (list p)])])
-    (send (send (get-field world g) get-region 2) occupy! r1 3)
-    (send p add-race! r2)
-    (set-field! tokens-in-hand r1 0)
-    (set-field! tokens-in-hand r2 15)
-    (send p conquer)
-    (check-equal? (get-field tokens-in-hand r1) 2)
-    (check-equal? (get-field tokens-in-hand r2) 10))

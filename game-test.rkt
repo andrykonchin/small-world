@@ -23,6 +23,6 @@
     (test-case "races"
       (let ([g (new-game)])
         (check-equal? (length (send g get-races)) 6)
-        (check-equal? (length (send g get-race-banners)) 8)
-        (check-equal? (first (send g get-race-banners)) 'humans)))
+        (check-equal? (length (get-field race-banners g)) 8)
+        (check-equal? (first (get-field race-banners g)) 'humans)))
     ))

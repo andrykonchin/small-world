@@ -21,16 +21,11 @@
     (for ([p players])
       (send p join-game! this))
     
-    (define/public (get-players) players)
-    
     (define/public (add-player! player)
       (set! players (append players (list player))))
 
-    (define race-banners all-race-banners)
-    (define/public (get-race-banners) race-banners)
-    
-    (define special-powers all-special-powers)
-    (define/public (get-special-powers) special-powers)
+    (field [race-banners all-race-banners])
+    (field [special-powers all-special-powers])
     
     (define turn 1)
     (define/public (get-turn) turn)
