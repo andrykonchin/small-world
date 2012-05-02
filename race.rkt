@@ -11,7 +11,6 @@
          race-in-decline?
          race-can-conquer?
          race-decline!
-         race-withdraw!
          all-race-banners
          all-special-powers)
 
@@ -45,9 +44,6 @@
     (define/public (conquer! region)
       (let ([tokens-to-conquer (region-tokens-to-conquer region)])
         (when (can-conquer-region? region)
-          (when (region-occupant-race region)
-            (race-withdraw! (region-occupant-race region)
-                            (region-occupant-count region)))
           (set! tokens-in-hand (- tokens-in-hand tokens-to-conquer))
           (region-occupy! region this tokens-to-conquer))))
     ))
@@ -66,9 +62,6 @@
 
 (define (race-decline! race)
   (set-field! in-decline race #t))
-
-(define (race-withdraw! race token-count)
-  (send race withdraw! token-count))
 
 (define all-race-banners
   '(amazons dwarves elves ghouls giants
