@@ -86,7 +86,7 @@
 (send g play-turn)
 (check-equal? (player-races p1) (list r1))
 (check-equal? (player-races p2) (list r2))
-(check-equal? (get-tokens w 2) '(amazons amazons))
+(check-equal? (region-occupant-count (get-region w 2)) 2)
 (check-equal? (send g get-turn) 2)
 (check-equal? (length (send g get-races)) 6)
 

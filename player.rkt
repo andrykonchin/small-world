@@ -6,6 +6,7 @@
 (require "world.rkt")
 (require "race.rkt")
 
+
 (provide new-player
          player-name
          player-points
@@ -35,10 +36,9 @@
     (define/public (conquer)
       (for ([race races] #:when (can-conquer? race))
         (for ([r ((strategy-conquer strategy) this race)])
-        (let ([tokens-to-conquer (+ 2 (length (get-tokens (send game get-world) r)))])
-          (set-tokens! (send game get-world)
-                       r
-                       (make-list tokens-to-conquer (race-race-banner race)))))))
+          (let* ([region (get-region (send game get-world) r)]
+                 [tokens-to-conquer (region-tokens-to-conquer region)])
+            (region-occupy! region race tokens-to-conquer)))))
     
     (define (redeploy)
       #f)

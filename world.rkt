@@ -3,10 +3,15 @@
 (require rackunit)
 
 (provide new-world
+         get-region
          get-terrain-type
          get-adjacent-regions
          get-tokens
-         set-tokens!)
+         region-tokens
+         region-occupant-race
+         region-occupant-count
+         region-tokens-to-conquer
+         region-occupy!)
 
 
 ;; Region
@@ -17,17 +22,32 @@
     (init-field places)
     (init-field adjacent-regions)
     (init-field tokens)
+    (field [occupant-race #f])
+    (field [occupant-count 0])
+    
+    (define/public (occupy! race token-count)
+      (set! occupant-race race)
+      (set! occupant-count token-count))
+
+    (define/public (tokens-to-conquer)
+      (+ 2 occupant-count (length tokens)))
     ))
     
-;(struct region (terrain-type places adjacent-regions [tokens #:mutable]))
-
 (define (new-region terrain-type places adjacent-regions . tokens)
   (make-object region% terrain-type places adjacent-regions tokens))
 
 (define region-terrain-type (class-field-accessor region% terrain-type))
 (define region-adjacent-regions (class-field-accessor region% adjacent-regions))
 (define region-tokens (class-field-accessor region% tokens))
-(define set-region-tokens! (class-field-mutator region% tokens))
+(define region-occupant-race (class-field-accessor region% occupant-race))
+(define region-occupant-count (class-field-accessor region% occupant-count))
+
+(define (region-occupy! region race token-count)
+  (send region occupy! race token-count))
+
+(define (region-tokens-to-conquer region)
+  (send region tokens-to-conquer))
+  
 
 
 ;; World (map)
@@ -64,9 +84,6 @@
 (define (get-tokens world r)
   (region-tokens (get-region world r)))
 
-(define (set-tokens! world r tokens)
-  (set-region-tokens! (get-region world r) tokens))
-
 
 ;; Tests
 
@@ -87,6 +104,18 @@
 (check-equal? (get-tokens w 1) '())
 (check-equal? (get-tokens w 3) '(lost-tribe))
 
-(set-tokens! w 3 '(amazon amazon amazon))
-(check-equal? (get-tokens w 3) '(amazon amazon amazon))
+; region-occupy!
+(let ([region (new-region 'farmlands '() '())]
+      [race 'some-race])
+  (region-occupy! region race 2)
+  (check-equal? (region-occupant-race region) 'some-race)
+  (check-equal? (region-occupant-count region) 2))
 
+;region-tokens-to-conquer
+(let ([r1 (new-region 'farmlands '() '())]
+      [r2 (new-region 'mountains '() '() 'mountain)])
+  (check-equal? (region-tokens-to-conquer r1) 2)
+  (check-equal? (region-tokens-to-conquer r2) 3)
+  (region-occupy! r1 'amazons 3)
+  (check-equal? (region-tokens-to-conquer r1) 5))
+  
