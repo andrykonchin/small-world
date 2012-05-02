@@ -44,8 +44,7 @@
         (check-false (send p get-active-race))))
     
     (test-case "pick-a-race"
-      (let* ([p (new-player "Vasya" (new (class strategy%
-                                          (super-new)
+      (let* ([p (new-player "Vasya" (new (class strategy% (super-new)
                                           (define/override (pick-a-race) 2))))]
              [g (new-game)]
              [race (list-ref (get-field races g) 2)])
@@ -64,8 +63,7 @@
     
     (test-case "conquer"
       (let* ([count 0]
-             [p (new-player "Vasya" (new (class strategy%
-                                           (super-new)
+             [p (new-player "Vasya" (new (class strategy% (super-new)
                                            (define/override (conquer race) 
                                              (set! count (add1 count))
                                              '(2)))))]
@@ -74,6 +72,18 @@
         (set-field! world p (new-world two-player-map))
         (send p add-race! r1)
         (send p add-race! r2)
-        (send p conquer)
+        (send p conquer!)
         (check-equal? count 2)))
+
+    (test-case "score-victory-coins!"
+      (let* ([p (new-player "Vasya")]
+             [r1 (new (class race% (super-new)
+                        (define/override (score-coins) 3)))]
+             [r2 (new (class race% (super-new)
+                        (define/override (score-coins) 4)))])
+        (send p add-race! r1)
+        (send p add-race! r2)
+        (check-equal? (get-field coins p) 5)
+        (send p score-victory-coins!)
+        (check-equal? (get-field coins p) 12)))
     ))

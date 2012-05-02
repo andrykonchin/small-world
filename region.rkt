@@ -17,7 +17,7 @@
     
     (define/public (occupy! race token-count)
       (when occupant-race
-        (send occupant-race withdraw! occupant-count))
+        (send occupant-race withdraw! this))
       (set! occupant-race race)
       (set! occupant-count token-count))
 

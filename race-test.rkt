@@ -40,9 +40,19 @@
              [race2 (new-race 'alchemist 'dwarves)]
              [region (new-region 'hills '() '())])
         (send region occupy! race1 3)
+        (set-field! occupied-regions race1 (list region))
         (set-field! tokens-in-hand race1 0)
         (set-field! tokens-in-hand race2 15)
+        
         (send race2 conquer! region)
+        (check-equal? (get-field occupied-regions race1) '())
+        (check-equal? (get-field occupied-regions race2) (list region))
         (check-equal? (get-field tokens-in-hand race1) 2)
         (check-equal? (get-field tokens-in-hand race2) 10)))
+    
+    (test-case "score-coins"
+      (let* ([race (new-race 'berserk 'amazons)])
+        (check-equal? (send race score-coins) 0)
+        (set-field! occupied-regions race '(r1 r2 r3))
+        (check-equal? (send race score-coins) 3)))
     ))
