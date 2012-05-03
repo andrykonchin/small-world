@@ -52,6 +52,11 @@
       
       (set-field! occupant-count region 
                   (- (get-field occupant-count region) token-count))
+      
+      (when (= (get-field occupant-count region) 0) ; abandon region
+        (set-field! occupant-race region #f)
+        (set! occupied-regions (remove region occupied-regions)))
+      
       (set! tokens-in-hand (+ tokens-in-hand token-count)))
     
     (define/public (can-conquer-region? region)
