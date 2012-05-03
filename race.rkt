@@ -77,7 +77,7 @@
           (get-adjacent-regions world 0)
           (filter (lambda (r) (not (equal? 
                                     (get-field occupant-race (send world get-region r))
-                                           this)))
+                                    this)))
                   (remove-duplicates 
                    (foldl append 
                           '() 

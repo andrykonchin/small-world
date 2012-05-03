@@ -23,6 +23,7 @@
 
     (define (add-new-race!)
       (let ([race (new-race (first special-powers) (first race-banners))])
+        (set-field! world race world)
         (set! races (append races (list race)))
         (set! race-banners (rest race-banners))
         (set! special-powers (rest special-powers))))

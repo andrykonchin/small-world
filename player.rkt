@@ -47,9 +47,12 @@
     
     (define/public (conquer!)
       (for ([race races] #:when (send race can-conquer?))
-        (for ([r (send strategy conquer race)])
-          (let ([region (send world get-region r)])
-            (send race conquer! region)))))
+        (conquer-with-race! race)))
+    
+    (define (conquer-with-race! race)
+      (for ([r (send strategy conquer race)])
+        (let ([region (send world get-region r)])
+          (send race conquer! region))))
     
     (define/public (redeploy!)
       #f)
