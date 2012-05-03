@@ -51,6 +51,7 @@
     
     (define (conquer-with-race! race)
       (when (> (get-field tokens-in-hand race) 0)
+        (send race refresh-conquer-bonus!)
         (let ([r (send strategy conquer race)])
           (when (and r (send race conquer! (send world get-region r)))
             (conquer-with-race! race)))))

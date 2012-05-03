@@ -17,6 +17,7 @@
     (field [tokens-in-hand 0])
     (field [occupied-regions '()])
     (field [world #f])
+    (field [conquer-bonus 0])
     
     (define/public (initial-tokens) 0)
     
@@ -59,15 +60,32 @@
       
       (set! tokens-in-hand (+ tokens-in-hand token-count)))
     
+    (define (throw-a-die)
+      2)
+    
+    (define/public (get-tokens-to-conquer region)
+      (max (- (send region tokens-to-conquer) 
+              conquer-bonus)
+           1))
+    
+    (define/public (refresh-conquer-bonus!)
+      (void))
+    
     (define/public (conquer! region)
-      (let ([tokens-to-conquer (send region tokens-to-conquer)])
-        (if (>= tokens-in-hand tokens-to-conquer)
-            (begin
-              (set! tokens-in-hand (- tokens-in-hand tokens-to-conquer))
-              (send region occupy! this tokens-to-conquer)
-              (set! occupied-regions (cons region occupied-regions))
-              #t)
-            #f)))
+      (let ([tokens-to-conquer (get-tokens-to-conquer region)])
+        (cond [(>= tokens-in-hand tokens-to-conquer)
+               (occupy-region region tokens-to-conquer)
+               #t]
+              [(>= (+ tokens-in-hand (throw-a-die)) tokens-to-conquer)
+               (occupy-region region tokens-in-hand)
+               #t]
+              [else #f])))
+    
+    (define (occupy-region region token-count)
+      (set! tokens-in-hand (- tokens-in-hand token-count))
+      (send region occupy! this token-count)
+      (set! occupied-regions (cons region occupied-regions)))
+    
     
     (define/public (score-coins)
       (for/sum ([region occupied-regions])
