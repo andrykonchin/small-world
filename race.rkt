@@ -59,13 +59,9 @@
       
       (set! tokens-in-hand (+ tokens-in-hand token-count)))
     
-    (define/public (can-conquer-region? region)
-      (>= tokens-in-hand 
-          (send region tokens-to-conquer)))
-    
     (define/public (conquer! region)
       (let ([tokens-to-conquer (send region tokens-to-conquer)])
-        (if (can-conquer-region? region)
+        (if (>= tokens-in-hand tokens-to-conquer)
             (begin
               (set! tokens-in-hand (- tokens-in-hand tokens-to-conquer))
               (send region occupy! this tokens-to-conquer)
@@ -85,7 +81,7 @@
           (get-adjacent-regions world 0)
           (filter (lambda (r) (not (equal? 
                                     (get-field occupant-race (send world get-region r))
-                                           this)))
+                                    this)))
                   (remove-duplicates 
                    (foldl append 
                           '() 

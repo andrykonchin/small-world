@@ -28,16 +28,6 @@
         (send rg decline!)
         (check-true (send rg can-conquer?))))
     
-    (test-case "can-conquer-region?"
-      (let ([race (new-race 'berserk 'amazons)]
-            [region (new (class object% 
-                           (super-new) 
-                           (define/public (tokens-to-conquer) 5)))])
-        (set-field! tokens-in-hand race 4)
-        (check-false (send race can-conquer-region? region))
-        (set-field! tokens-in-hand race 5)
-        (check-true (send race can-conquer-region? region))))
-    
     (test-case "conquer!"
       (let ([race1 (new-race 'berserk 'amazons)]
             [race2 (new-race 'alchemist 'dwarves)]
