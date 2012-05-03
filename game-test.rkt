@@ -2,7 +2,6 @@
 
 (require rackunit)
 (require "game.rkt")
-(require "player.rkt")
 
 (provide game-test-suite) 
 

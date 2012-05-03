@@ -3,6 +3,8 @@
 (require rackunit)
 (require "race.rkt")
 (require "region.rkt")
+(require "race-banners.rkt")
+(require "special-powers.rkt")
 
 (provide race-test-suite) 
 
@@ -71,4 +73,8 @@
         (check-true (get-field in-decline race))
         (check-equal? (get-field occupant-count region1) 1)
         (check-equal? (get-field occupant-count region2) 1)))
+    
+    (test-case "ghouls" 
+      (let ([race (new (alchemist (ghouls race%)))])
+        (check-equal? (send race initial-tokens) 9)))
     ))

@@ -7,8 +7,7 @@
          new-race
          race-active?
          all-race-banners
-         all-special-powers
-         ghouls)
+         all-special-powers)
 
 (define race%
   (class object%
@@ -17,6 +16,8 @@
     (field [in-decline #f])
     (field [tokens-in-hand 0])
     (field [occupied-regions '()])
+    
+    (define/public (initial-tokens) 0)
     
     (define/public (add-coin!)
       (set! coins (add1 coins)))
@@ -88,13 +89,3 @@
               hill merchant mounted pillaging seafaring
               spirit stout swamp underworld wealthy))
 
-(define (ghouls %)
-  (class %
-    (super-new)
-    
-    (define/override (can-conquer?)
-      #t)
-    
-    (define/override (flip-tokens region)
-      (void))
-    ))
