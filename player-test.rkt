@@ -62,18 +62,20 @@
         ))
     
     (test-case "conquer"
-      (let* ([count 0]
-             [p (new-player "Vasya" (new (class strategy% (super-new)
-                                           (define/override (conquer race) 
-                                             (set! count (add1 count))
-                                             '(2)))))]
+      (let* ([world (new-world two-player-map)]
+             [p (new-player "Vasya" (new strategy%))]
              [r1 (new-race 'berserk 'amazons)]
              [r2 (new-race 'alchemist 'dwarves)])
-        (set-field! world p (new-world two-player-map))
+        (set-field! world p world)
+        (set-field! world r1 world)
+        (set-field! world r2 world)
+        (set-field! tokens-in-hand r1 2)
+        (set-field! tokens-in-hand r2 4)
         (send p add-race! r1)
         (send p add-race! r2)
         (send p conquer!)
-        (check-equal? count 2)))
+        (check-equal? (length (get-field occupied-regions r1)) 0)
+        (check-equal? (length (get-field occupied-regions r2)) 1)))
     
     (test-case "score-victory-coins!"
       (let* ([p (new-player "Vasya")]

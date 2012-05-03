@@ -60,10 +60,13 @@
     
     (define/public (conquer! region)
       (let ([tokens-to-conquer (send region tokens-to-conquer)])
-        (when (can-conquer-region? region)
-          (set! tokens-in-hand (- tokens-in-hand tokens-to-conquer))
-          (send region occupy! this tokens-to-conquer)
-          (set! occupied-regions (cons region occupied-regions)))))
+        (if (can-conquer-region? region)
+            (begin
+              (set! tokens-in-hand (- tokens-in-hand tokens-to-conquer))
+              (send region occupy! this tokens-to-conquer)
+              (set! occupied-regions (cons region occupied-regions))
+              #t)
+            #f)))
     
     (define/public (score-coins)
       (for/sum ([region occupied-regions])
@@ -77,7 +80,7 @@
           (get-adjacent-regions world 0)
           (filter (lambda (r) (not (equal? 
                                     (get-field occupant-race (send world get-region r))
-                                    this)))
+                                           this)))
                   (remove-duplicates 
                    (foldl append 
                           '() 

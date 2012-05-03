@@ -50,9 +50,10 @@
         (conquer-with-race! race)))
     
     (define (conquer-with-race! race)
-      (for ([r (send strategy conquer race)])
-        (let ([region (send world get-region r)])
-          (send race conquer! region))))
+      (when (> (get-field tokens-in-hand race) 0)
+        (let ([r (send strategy conquer race)])
+          (when (and r (send race conquer! (send world get-region r)))
+            (conquer-with-race! race)))))
     
     (define/public (redeploy!)
       #f)
