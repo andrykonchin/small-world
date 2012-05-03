@@ -68,8 +68,8 @@
                   (pick-a-race!)
                   (ready-troops!))
               (conquer!)
-              (redeploy!)))
-        (score-victory-coins!)))
+              (redeploy!))))
+      (score-victory-coins!))
     ))
 
 (define (new-player name [strategy (new strategy%)])

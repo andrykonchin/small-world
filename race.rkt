@@ -16,6 +16,7 @@
     (field [in-decline #f])
     (field [tokens-in-hand 0])
     (field [occupied-regions '()])
+    (field [world #f])
     
     (define/public (initial-tokens) 0)
     
@@ -70,6 +71,18 @@
     
     (define/public (score-coins-for-region region)
       1)
+    
+    (define/public (get-conquerable-regions)
+      (if (empty? occupied-regions)
+          (get-adjacent-regions world 0)
+          (filter (lambda (r) (not (equal? 
+                                    (get-field occupant-race (send world get-region r))
+                                           this)))
+                  (remove-duplicates 
+                   (foldl append 
+                          '() 
+                          (map (lambda (region) (get-field adjacent-regions region)) 
+                               occupied-regions))))))
     ))
 
 (define (new-race special-power race-banner)

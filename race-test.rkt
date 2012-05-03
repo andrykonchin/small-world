@@ -5,6 +5,7 @@
 (require "region.rkt")
 (require "race-banners.rkt")
 (require "special-powers.rkt")
+(require "world.rkt")
 
 (provide race-test-suite) 
 
@@ -77,4 +78,21 @@
     (test-case "ghouls" 
       (let ([race (new (alchemist (ghouls race%)))])
         (check-equal? (send race initial-tokens) 9)))
+    
+    (test-case "get-conquerable-regions"
+      (let ([race (new (alchemist (ghouls race%)))]
+            [world (new-world '((border () (1 2))
+                                (sea-or-lake () (0 2))
+                                (farmlands () (0 1 3 4))
+                                (hills () (2 3 4))
+                                (swamp () (2 3))))])
+        (set-field! world race world)
+        (check-equal? (send race get-conquerable-regions) '(1 2))
+        
+        (let ([r3 (send world get-region 3)]
+              [r4 (send world get-region 4)])
+          (send r3 occupy! race 8) 
+          (send r4 occupy! race 9) 
+          (set-field! occupied-regions race (list r3 r4)))
+        (check-equal? (send race get-conquerable-regions) '(2))))
     ))
