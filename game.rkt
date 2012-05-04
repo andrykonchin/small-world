@@ -4,6 +4,8 @@
 (require "maps.rkt")
 (require "world.rkt")
 (require "race.rkt")
+(require "race-banners.rkt")
+(require "special-powers.rkt")
 
 (provide new-game)
 

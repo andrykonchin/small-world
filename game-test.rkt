@@ -2,6 +2,8 @@
 
 (require rackunit)
 (require "game.rkt")
+(require "race-banners.rkt")
+(require "special-powers.rkt")
 
 (provide game-test-suite) 
 
@@ -22,8 +24,11 @@
     (test-case "races"
       (let ([g (new-game)])
         (check-equal? (length (get-field races g)) 6)
-        (check-equal? (length (get-field race-banners g)) 8)
-        (check-equal? (first (get-field race-banners g)) 'humans)))
+        (check-equal? (length (get-field race-banners g)) (- 14 6))
+        (check-equal? (first (get-field race-banners g)) humans)
+        (check-equal? (length (get-field special-powers g)) (- 20 6))
+        (check-equal? (first (get-field special-powers g)) flying)
+        ))
 
     (test-case "take-race!"
       (let* ([g (new-game)]

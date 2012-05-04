@@ -5,9 +5,7 @@
 
 (provide race%
          new-race
-         race-active?
-         all-race-banners
-         all-special-powers)
+         race-active?)
 
 (define race%
   (class object%
@@ -108,19 +106,7 @@
     ))
 
 (define (new-race special-power race-banner)
-  (new race%))
+  (new (special-power (race-banner race%))))
 
 (define race-in-decline? (class-field-accessor race% in-decline))
 (define race-active? (negate race-in-decline?))
-
-(define all-race-banners
-  '(amazons dwarves elves ghouls giants
-            halflings humans orcs ratmen skeletons
-            sourcerers tritons trolls wizards))
-
-(define all-special-powers
-  '(alchemist berserk bivouacking commando diplomat
-              dragon-master flying forest fortified heroic
-              hill merchant mounted pillaging seafaring
-              spirit stout swamp underworld wealthy))
-

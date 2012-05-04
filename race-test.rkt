@@ -13,12 +13,12 @@
 (define race-test-suite
   (test-suite "race"
     (test-case "init"
-      (let ([r (new-race 'berserk 'amazons)])
+      (let ([r (new-race berserk amazons)])
         (check-equal? (get-field coins r) 0)
         (check-false (get-field in-decline r))))
     
     (test-case "can-conquer?"
-      (let ([r (new-race 'berserk 'amazons)])
+      (let ([r (new-race berserk amazons)])
         (check-true (send r can-conquer?))
         (send r decline!)
         (check-false (send r can-conquer?)))
@@ -29,8 +29,8 @@
         (check-true (send rg can-conquer?))))
     
     (test-case "conquer!"
-      (let ([race1 (new-race 'berserk 'amazons)]
-            [race2 (new-race 'alchemist 'dwarves)]
+      (let ([race1 (new-race berserk amazons)]
+            [race2 (new-race alchemist dwarves)]
             [region (new-region 'hills '() '())])
         (send region occupy! race1 3)
         (set-field! occupied-regions race1 (list region))
@@ -44,13 +44,13 @@
         (check-equal? (get-field tokens-in-hand race2) 10)))
     
     (test-case "score-coins"
-      (let ([race (new-race 'berserk 'amazons)])
+      (let ([race (new-race berserk amazons)])
         (check-equal? (send race score-coins) 0)
         (set-field! occupied-regions race '(r1 r2 r3))
         (check-equal? (send race score-coins) 3)))
     
     (test-case "decline!"
-      (let ([race (new-race 'berserk 'amazons)]
+      (let ([race (new-race berserk amazons)]
             [region1 (new-region 'hills '() '())]
             [region2 (new-region 'hills '() '())])
         (set-field! occupied-regions race (list region1 region2))

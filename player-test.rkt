@@ -22,8 +22,8 @@
     
     (test-case "add-race!"
       (let* ([p (new-player "Vasya")]
-             [r1 (new-race 'berserk 'amazons)]
-             [r2 (new-race 'alchemist 'dwarves)])
+             [r1 (new race%)]
+             [r2 (new race%)])
         (send r1 add-coin!)
         (send r1 add-coin!)
         (check-equal? (get-field coins p) 5)
@@ -36,7 +36,7 @@
     
     (test-case "get-active-race"
       (let ([p (new-player "Vasya")]
-            [r (new-race 'berserk 'amazons)])
+            [r (new race%)])
         (check-false (send p get-active-race))
         (send p add-race! r)
         (check-equal? (send p get-active-race) r)
@@ -64,8 +64,8 @@
     (test-case "conquer"
       (let* ([world (new-world two-player-map)]
              [p (new-player "Vasya" (new strategy%))]
-             [r1 (new-race 'berserk 'amazons)]
-             [r2 (new-race 'alchemist 'dwarves)])
+             [r1 (new race%)]
+             [r2 (new race%)])
         (set-field! world p world)
         (set-field! world r1 world)
         (set-field! world r2 world)
